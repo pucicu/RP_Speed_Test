@@ -56,4 +56,4 @@ calculations performed on a 2.3 GHz Quad-Core Intel Core i7 with 16GB RAM, excep
 the calculations using the _PyRQA_ package, which were performed on a Nvidia
 GPU Tesla K40c with OpenCL 1.2.
 
-![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](software_speed.svg "Title")
+![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](software_speed.svg "Computation speed")
