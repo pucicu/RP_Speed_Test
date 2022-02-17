@@ -27,7 +27,7 @@ for i in range(0,len(tspan)):
     for j in range(0,K):
         start_time = time.time()
         R = rp(x[1000:(1000+N[i]),2], 3, 6, 1.2)
-        Q1 = mean(R)
+        Q1 = np.mean(R)
         Q2 = det(R, lmin=2, hist=None, verb=False)
         Q3 = entr(R, lmin=2, hist=None, verb=False)
         t_ += (time.time() - start_time)
