@@ -27,7 +27,7 @@ for i in range(0,len(tspanRP)):
     tRP_ = 0
     tRQA_ = 0
     for j in range(0,K):
-        xe = embed(x[1000:(1000+N[i]),2], 3, 6)
+        xe = embed(x[1000:(1000+N[i]),0], 3, 6)
         start_time = time.time()
         R = rp(xe, 1.2)
         tRP_ += (time.time() - start_time)

@@ -30,19 +30,21 @@ K = 10; # number of runs (for averaging time)
 maxT = 30; # stop calculations if maxT is exceeded
 
 # dry run to pre-compile
-x = embed(sol[3,1000:1500], 3, 6);
+x = embed(sol[1,1000:1500], 3, 6);
 R = RecurrenceMatrix(x, 1.2, parallel=false);
+RN = rna(R);
 Q = rqa(R, theiler = 1, onlydiagonal=false);
 
 for (i,N_) in enumerate(N)
-   x = embed(sol[3,1000:1000+N_], 3, 6);
+   x = embed(sol[1,1000:1000+N_], 3, 6);
    tRP_ = 0;
    tRQA_ = 0;
    for j in 1:K
        t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=false);
-       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=false);
+       t2 = @elapsed RN = rna(R);
+       t3 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=false);
        tRP_ = tRP_ + t1;
-       tRQA_ = tRQA_ + t2;
+       tRQA_ = tRQA_ + t2 + t3;
        print("  " ,j, "\n")
    end
    tspanRP[i] = tRP_ / K; # average calculation time

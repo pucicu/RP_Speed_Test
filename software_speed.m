@@ -18,7 +18,7 @@ options = odeset('RelTol',1e-8,'AbsTol',1e-10);
 t(1:1000) = []; x(1:1000,:) = [];
 
 %% length of time series for RQA calculation test
-N = round(10.^(2:.075:4.08));
+N = round(10.^(2:.075:4.65));
 
 
 %% calculate RP and RQA for different length
@@ -39,7 +39,7 @@ maxT = 30; % stop calculations if maxT is exceeded
 for i = 1:length(N)
     tRP_ = 0;
     tRQA_ = 0;
-    xe = embed(x(1:1+N(i)-1,3), 3, 6);
+    xe = embed(x(1:1+N(i)-1,1), 3, 6);
     for j = 1:K
         %R = squareform(pdist(xe) <= 1.2);
         tic

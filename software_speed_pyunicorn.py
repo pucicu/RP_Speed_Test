@@ -5,6 +5,7 @@ from scipy.integrate import odeint
 import numpy as np
 import time
 from pyunicorn.timeseries import RecurrencePlot
+from pyunicorn.timeseries import RecurrenceNetwork
 
 # the Roessler ODE
 def roessler(x,t):
@@ -28,11 +29,14 @@ for i in range(0,len(tspanRP)):
     tRQA_ = 0
     for j in range(0,K):
         start_time = time.time()
-        R = RecurrencePlot(x[1000:(1000+N[i]),2], dim=3, tau=6, metric="euclidean",
+        R = RecurrenceNetwork(x[1000:(1000+N[i]),0], dim=3, tau=6, metric="euclidean",
                         normalize=False, threshold=1.2, silence_level=12)
         tRP_ += (time.time() - start_time)
         start_time = time.time()
         Q = R.rqa_summary(l_min=2)           
+        Q2 = R.transitivity()           
+        Q3 = R.clustering()
+        Q4 = R.white_vert_entropy()        
         tRQA_ += (time.time() - start_time)
         print("  ", j)
     tspanRP[i] = tRP_ / K # average calculation time

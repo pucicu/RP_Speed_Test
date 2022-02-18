@@ -27,7 +27,7 @@ K = 10; # number of runs (for averaging time)
 maxT = 50; # stop calculations if maxT is exceeded
 
 for i in range(0,len(tspan)):
-    xe = TimeSeries(x[1000:(1000+N[i]),2],
+    xe = TimeSeries(x[1000:(1000+N[i]),0],
                          embedding_dimension=3,
                          time_delay=6)
     settings = Settings(xe,
