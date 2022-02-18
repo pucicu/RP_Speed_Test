@@ -5,7 +5,6 @@ from scipy.integrate import odeint
 import numpy as np
 import time
 from pyunicorn.timeseries import RecurrencePlot
-from pyunicorn.timeseries import RecurrenceNetwork
 
 # the Roessler ODE
 def roessler(x,t):
