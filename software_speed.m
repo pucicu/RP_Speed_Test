@@ -66,8 +66,6 @@ tspanRP
 ex = [N(:) tspanRP(:) tspanRQA(:)];
 save time_matlab_vector.csv ex -ascii -tabs
 
-%exit
-
 
 %% length of time series for RQA calculation test
 N = round(10.^(2:.075:4.08));
