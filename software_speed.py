@@ -18,27 +18,33 @@ N = np.round(10**np.arange(2.3,4.65,.075)). astype(int)
 
 
 # calculate RP and RQA for different length
-tspan = np.zeros(len(N)); # result vector computation time
+tspanRP = np.zeros(len(N)); # result vector computation time
+tspanRQA = np.zeros(len(N)); # result vector computation time
 K = 10; # number of runs (for averaging time)
 maxT = 30; # stop calculations if maxT is exceeded
 
-for i in range(0,len(tspan)):
-    t_ = 0
+for i in range(0,len(tspanRP)):
+    tRP_ = 0
+    tRQA_ = 0
     for j in range(0,K):
+        xe = embed(x[1000:(1000+N[i]),2], 3, 6)
         start_time = time.time()
-        R = rp(x[1000:(1000+N[i]),2], 3, 6, 1.2)
+        R = rp(xe, 1.2)
+        tRP_ += (time.time() - start_time)
+        start_time = time.time()
         Q1 = np.mean(R)
         Q2 = det(R, lmin=2, hist=None, verb=False)
         Q3 = entr(R, lmin=2, hist=None, verb=False)
-        t_ += (time.time() - start_time)
+        tRQA_ += (time.time() - start_time)
         print("  ", j)
-    tspan[i] = t_ / K # average calculation time
-    print(N[i], ": ", tspan[i])
+    tspanRP[i] = tRP_ / K # average calculation time
+    tspanRQA[i] = tRQA_ / K # average calculation time
+    print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
     
-    if tspan[i] >= maxT:
+    if tspanRP[i] + tspanRQA[i] >= maxT:
        break
 
-tspan
+tspanRP
 
-np.savetxt('time_python_default.csv',list(zip(N,tspan)))
+np.savetxt('time_python_default.csv',list(zip(N, tspanRP, tspanRQA)))
 

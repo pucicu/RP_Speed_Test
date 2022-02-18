@@ -31,16 +31,16 @@ maxT = 30; # stop calculations if maxT is exceeded
 
 # dry run to pre-compile
 x = embed(sol[3,1000:1500], 3, 6);
-R = RecurrenceMatrix(x, 1.2, parallel=false);
-Q = rqa(R, theiler = 1, onlydiagonal=false);
+R = RecurrenceMatrix(x, 1.2, parallel=true);
+Q = rqa(R, theiler = 1, onlydiagonal=true);
 
 for (i,N_) in enumerate(N)
    x = embed(sol[3,1000:1000+N_], 3, 6);
    tRP_ = 0;
    tRQA_ = 0;
    for j in 1:K
-       t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=false);
-       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=false);
+       t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=true);
+       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=true);
        tRP_ = tRP_ + t1;
        tRQA_ = tRQA_ + t2;
        print("  " ,j, "\n")
@@ -56,7 +56,7 @@ end
 
 tspanRP
 
-open("time_julia.csv", "w") do io
+open("time_julia_parallel.csv", "w") do io
    writedlm(io, [N tspanRP tspanRQA], ',')
 end;
        

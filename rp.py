@@ -128,11 +128,8 @@ def embed(x, m, tau):
 
     return z
 
-def rp(x, m, tau, e, norm="euclidean", threshold_by="distance", normed=True):
+def rp(z, e, norm="euclidean", threshold_by="distance"):
     """Returns the recurrence plot of given time series."""
-    if normed:
-        x = normalize(x)
-    z = embed(x, m, tau)
     D = squareform(pdist(z, metric=norm))
     R = np.zeros(D.shape, dtype="int")
     if threshold_by == "distance":

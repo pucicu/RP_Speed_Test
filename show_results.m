@@ -9,17 +9,28 @@ end
 
 %% plot data
 clf
-hold on
+
+txt2 = {}; k = 1;
 for i = 1:length(files)
-   h(i) = semilogy(x{i}(:,1), (x{i}(:,2)));
+   if size(x{i},2) == 3
+       ha1 = subplot(121); hold on
+       h1(i) = semilogy(x{i}(:,1), (x{i}(:,2)));
+       ha2 = subplot(122), hold on
+       h2(i) = semilogy(x{i}(:,1), (x{i}(:,3)));
+       txt2{k} = txt{i}; 
+       k = k+1;
+   end
 end
-xlabel('Length'), ylabel('Time (sec)')
-legend(strrep(txt,'_','\_'), 'location', 'southeast')
-ha = gca;
-ha.YAxis.Scale='log';
-ha.XAxis.Scale='log';
-ha.XTickLabel = num2str(ha.XAxis.TickValues(:));
-ha.YTickLabel = num2str(ha.YAxis.TickValues(:));
-grid on, box on
-axis([100 100000 0.001 30])
+%xlabel('Length'), ylabel('Time (sec)')
+legend(strrep(txt2,'_','\_'), 'location', 'southeast')
+ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log';
+ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log';
+ha1.XLim = [100 100000]; ha2.XLim = [100 100000];
+ha1.YLim = [0.0001 30]; ha2.YLim = [0.0001 30];
+ha1.XTickLabel = num2str(ha1.XAxis.TickValues(:));
+ha2.XTickLabel = num2str(ha2.XAxis.TickValues(:));
+ha1.YTickLabel = num2str(ha1.YAxis.TickValues(:));
+ha2.YTickLabel = num2str(ha2.YAxis.TickValues(:));
+grid(ha1,'on'), grid(ha2,'on') 
+box(ha1,'on'), box(ha2,'on') 
 

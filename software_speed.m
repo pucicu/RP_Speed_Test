@@ -22,7 +22,8 @@ N = round(10.^(2:.075:4.08));
 
 
 %% calculate RP and RQA for different length
-tspan = zeros(length(N), 1); % result vector computation time
+tspanRP = zeros(length(N), 1); % result vector computation time
+tspanRQA = zeros(length(N), 1); % result vector computation time
 K = 10; % number of runs (for averaging time)
 maxT = 30; % stop calculations if maxT is exceeded
 
@@ -36,30 +37,73 @@ maxT = 30; % stop calculations if maxT is exceeded
 % tspan
 
 for i = 1:length(N)
-    t_ = 0;
+    tRP_ = 0;
+    tRQA_ = 0;
+    xe = embed(x(1:1+N(i)-1,3), 3, 6);
     for j = 1:K
-        tic
-        xe = embed(x(1:1+N(i)-1,3), 3, 6);
         %R = squareform(pdist(xe) <= 1.2);
+        tic
         R = rp(xe, 1.2, 'fix', 'euc', 'matlabvector'); % a bit slower than previous line because of some testing expressions
+        tRP_ = tRP_ + toc;
+        tic
         Q = rqa(R, 2, 1);
-
-        t_ = t_ + toc;
+        tRQA_ = tRQA_ + toc;
         
         disp(sprintf('  %i', j))
     end
-    tspan(i) = t_ / K; % average calculation time
-    disp(sprintf('%i: %f', N(i), tspan(i)))
+    tspanRP(i) = tRP_ / K; % average calculation time
+    tspanRQA(i) = tRQA_ / K; % average calculation time
+    disp(sprintf('%i: %f %f', N(i), tspanRP(i), tspanRQA(i)))
     
-    if tspan(i) >= maxT, break, end
+    if tspanRP(i) + tspanRQA(i) >= maxT, break, end
     
 end
-N(1:4) = []; tspan(1:4) = []; % remove first points before N=200
+N(1:4) = []; tspanRP(1:4) = []; tspanRQA(1:4) = [];% remove first points before N=200
 
-tspan
+tspanRP
 
 
-ex = [N(:) tspan(:)];
+ex = [N(:) tspanRP(:) tspanRQA(:)];
 save time_matlab_vector.csv ex -ascii -tabs
+
+
+
+
+
+
+tspanRP = zeros(length(N), 1); % result vector computation time
+tspanRQA = zeros(length(N), 1); % result vector computation time
+
+for i = 1:length(N)
+    tRP_ = 0;
+    tRQA_ = 0;
+    xe = embed(x(1:1+N(i)-1,3), 3, 6);
+    for j = 1:K
+        %R = squareform(pdist(xe) <= 1.2);
+        tic
+        R = rp(xe, 1.2, 'fix', 'euc', 'loops'); % a bit slower than previous line because of some testing expressions
+        tRP_ = tRP_ + toc;
+        tic
+        Q = rqa(R, 2, 1);
+        tRQA_ = tRQA_ + toc;
+        
+        disp(sprintf('  %i', j))
+    end
+    tspanRP(i) = tRP_ / K; % average calculation time
+    tspanRQA(i) = tRQA_ / K; % average calculation time
+    disp(sprintf('%i: %f %f', N(i), tspanRP(i), tspanRQA(i)))
+    
+    if tspanRP(i) + tspanRQA(i) >= maxT, break, end
+    
+end
+N(1:4) = []; tspanRP(1:4) = []; tspanRQA(1:4) = [];% remove first points before N=200
+
+tspanRP
+
+
+ex = [N(:) tspanRP(:) tspanRQA(:)];
+save time_matlab_loops.csv ex -ascii -tabs
+
+
 
 exit
