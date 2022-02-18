@@ -46,7 +46,7 @@ for i = 1:length(N)
         R = rp(xe, 1.2, 'fix', 'euc', 'matlabvector'); % a bit slower than previous line because of some testing expressions
         tRP_ = tRP_ + toc;
         tic
-        Q = rqa(R, 2, 1);
+        Q = rqa(R, 2, 1, 'non');
         tRQA_ = tRQA_ + toc;
         
         disp(sprintf('  %i', j))

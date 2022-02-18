@@ -32,7 +32,6 @@ maxT = 30; # stop calculations if maxT is exceeded
 # dry run to pre-compile
 x = embed(sol[1,1000:1500], 3, 6);
 R = RecurrenceMatrix(x, 1.2, parallel=true);
-RN = rna(R);
 Q = rqa(R, theiler = 1, onlydiagonal=true);
 
 for (i,N_) in enumerate(N)
@@ -41,10 +40,9 @@ for (i,N_) in enumerate(N)
    tRQA_ = 0;
    for j in 1:K
        t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=true);
-       t2 = @elapsed RN = rna(R);
-       t3 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=true);
+       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=true);
        tRP_ = tRP_ + t1;
-       tRQA_ = tRQA_ + t2 + t3;
+       tRQA_ = tRQA_ + t2;
        print("  " ,j, "\n")
    end
    tspanRP[i] = tRP_ / K; # average calculation time
