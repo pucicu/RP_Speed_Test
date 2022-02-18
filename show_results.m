@@ -21,8 +21,10 @@ for i = 1:length(files)
        k = k+1;
    end
 end
-%xlabel('Length'), ylabel('Time (sec)')
-legend(strrep(txt2,'_','\_'), 'location', 'southeast')
+xlabel(ha1,'Length'), ylabel(ha1,'Time (sec)')
+xlabel(ha2,'Length'), ylabel(ha2,'Time (sec)')
+legend(ha1,strrep(txt2,'_','\_'), 'location', 'southeast')
+legend(ha2,strrep(txt2,'_','\_'), 'location', 'southeast')
 ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log';
 ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log';
 ha1.XLim = [100 100000]; ha2.XLim = [100 100000];
