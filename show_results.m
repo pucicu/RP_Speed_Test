@@ -15,7 +15,7 @@ for i = 1:length(files)
    if size(x{i},2) == 3
        ha1 = subplot(121); hold on
        h1(i) = semilogy(x{i}(:,1), (x{i}(:,2)));
-       ha2 = subplot(122), hold on
+       ha2 = subplot(122); hold on
        h2(i) = semilogy(x{i}(:,1), (x{i}(:,3)));
        txt2{k} = txt{i}; 
        k = k+1;
