@@ -32,7 +32,7 @@ maxT = 30; # stop calculations if maxT is exceeded
 # dry run to pre-compile
 x = embed(sol[1,1000:1500], 3, 6);
 R = RecurrenceMatrix(x, 1.2, parallel=true);
-Q = rqa(R, theiler = 1, onlydiagonal=true);
+Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=true);
 
 for (i,N_) in enumerate(N)
    x = embed(sol[1,1000:1000+N_], 3, 6);
@@ -40,7 +40,7 @@ for (i,N_) in enumerate(N)
    tRQA_ = 0;
    for j in 1:K
        t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=true);
-       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=true);
+       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=true);
        tRP_ = tRP_ + t1;
        tRQA_ = tRQA_ + t2;
        print("  " ,j, "\n")
