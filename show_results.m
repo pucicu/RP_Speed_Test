@@ -35,7 +35,7 @@ legend(ha3,strrep(txt,'_','\_'), 'location', 'southeast')
 ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log'; ha3.YAxis.Scale='log';
 ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log'; ha3.XAxis.Scale='log';
 ha1.XLim = [100 100000]; ha2.XLim = [100 100000]; ha3.XLim = [100 100000];
-ha1.YLim = [0.00005 40]; ha2.YLim = [0.00005 40]; ha3.YLim = [0.00005 40];
+ha1.YLim = [0.00005 100]; ha2.YLim = [0.00005 100]; ha3.YLim = [0.00005 100];
 ha1.XTickLabel = num2str(ha1.XAxis.TickValues(:));
 ha2.XTickLabel = num2str(ha2.XAxis.TickValues(:));
 ha3.XTickLabel = num2str(ha2.XAxis.TickValues(:));

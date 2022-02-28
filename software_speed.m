@@ -18,14 +18,14 @@ options = odeset('RelTol',1e-8,'AbsTol',1e-10);
 t(1:1000) = []; x(1:1000,:) = [];
 
 %% length of time series for RQA calculation test
-N = round(10.^(2:.075:4.65));
+N = round(10.^(2:.075:5.06));
 
 
 %% calculate RP and RQA for different length
 tspanRP = zeros(length(N), 1); % result vector computation time
 tspanRQA = zeros(length(N), 1); % result vector computation time
 K = 10; % number of runs (for averaging time)
-maxT = 30; % stop calculations if maxT is exceeded
+maxT = 60; % stop calculations if maxT is exceeded
 
 % % using CRP toolbox (slow because of GUI framework)
 % for i = 1:length(N)

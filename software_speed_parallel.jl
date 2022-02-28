@@ -20,14 +20,14 @@ prob = ODEProblem(roessler!, [0., 0., 0.], (0.,5500.));
 sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
 
 # length of time series for RQA calculation test
-N = round.(Int, 10 .^ (2.3:.075:4.65));
+N = round.(Int, 10 .^ (2.3:.075:5.6));
 
 
 # calculate RP and RQA for different length
 tspanRP = zeros(length(N),1); # result vector computation time
 tspanRQA = zeros(length(N),1); # result vector computation time
 K = 10; # number of runs (for averaging time)
-maxT = 30; # stop calculations if maxT is exceeded
+maxT = 60; # stop calculations if maxT is exceeded
 
 # dry run to pre-compile
 x = embed(sol[1,1000:1500], 3, 6);

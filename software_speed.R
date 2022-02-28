@@ -17,13 +17,13 @@ r = rossler(time=seq(0,4500,by = 0.05));
 x = r$x
 
 # length of time series for RQA calculation test
-N = round(10.^seq(2.3,4.35, 0.075))
+N = round(10.^seq(2.3,5.06, 0.075))
 
 
 # calculate RP and RQA for different length
 tspan = numeric(length(N)) # result vector computation time
 K = 10 # number of runs (for averaging time)
-maxT = 30 # stop calculations if maxT is exceeded
+maxT = 60 # stop calculations if maxT is exceeded
 
 for (i in 1:length(N)) {
    t_ = 0

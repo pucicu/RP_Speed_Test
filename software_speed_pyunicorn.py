@@ -14,14 +14,14 @@ def roessler(x,t):
 x = odeint(roessler, [0, 0, 0], np.arange(0, 5500, .05))
 
 # length of time series for RQA calculation test
-N = np.round(10**np.arange(2.3,4.65,.075)). astype(int)
+N = np.round(10**np.arange(2.3,5.6,.075)). astype(int)
 
 
 # calculate RP and RQA for different length
 tspanRP = np.zeros(len(N)); # result vector computation time
 tspanRQA = np.zeros(len(N)); # result vector computation time
 K = 10; # number of runs (for averaging time)
-maxT = 30; # stop calculations if maxT is exceeded
+maxT = 60; # stop calculations if maxT is exceeded
 
 for i in range(0,len(tspanRP)):
     tRP_ = 0
