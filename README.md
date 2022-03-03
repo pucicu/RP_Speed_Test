@@ -16,7 +16,7 @@ Julia, and Python using the following packages/ tools
 
 Software | Package/ URL
 ---------|-------------
-MATLAB   | simple _rp.m_ v1.1 code <https://github.com/pucicu/rp>
+MATLAB   | simple _rp.m_ v1.2 code <https://github.com/pucicu/rp>
 R        | _crqa_ v2.0.2 <https://github.com/morenococo/crqa>
 Julia    | _DynamicalSystems.jl_ v1.4.0 <https://juliadynamics.github.io/DynamicalSystems.jl/dev/>
 Python   | simple RP and RQA implementation (included)
@@ -56,4 +56,4 @@ calculations performed on a 2.3 GHz Quad-Core Intel Core i7 with 16GB RAM, excep
 the calculations using the _PyRQA_ package, which were performed on a Nvidia
 GPU Tesla K40c with OpenCL 1.2. For _crqa_ (R) and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, both appear only in the figure on the total computation time.
 
-![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](software_speed.svg "Computation speed")
+![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/2b43c447564eed2cecd88d6c93db2d4d2ab3e6f6/software_speed.svg "Computation speed")
