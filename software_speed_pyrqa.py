@@ -18,7 +18,7 @@ def roessler(x,t):
 x = odeint(roessler, [0, 0, 0], np.arange(0, 5500, .05))
 
 # length of time series for RQA calculation test
-N = np.round(10**np.arange(2.3,5.06,.075)). astype(int)
+N = np.round(10**np.arange(2.,5.06,.075)). astype(int)
 
 
 # calculate RP and RQA for different length
@@ -50,4 +50,7 @@ for i in range(0,len(tspan)):
 
 tspan
 
-np.savetxt('time_python_pyrqa.csv',list(zip(N,tspan)))
+np.savetxt('time_python_pyrqa.csv',list(zip(N[4:],tspan[4:])))
+
+
+
