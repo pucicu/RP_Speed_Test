@@ -56,4 +56,4 @@ calculations performed on a 2.3 GHz Quad-Core Intel Core i7 with 16GB RAM, excep
 the calculations using the _PyRQA_ package, which were performed on a Nvidia
 GPU Tesla V100 with OpenCL 1.2. For _crqa_ (R) and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, both appear only in the figure on the total computation time.
 
-![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/fd5981ab3be782690cfb3ae27092f234915dd3cf/rp_rqa_speed-test.svg "Computation speed")
+![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/ee9347c60c1a1266e31da7c8609a969d8d38a061/rp_rqa_speed-test.svg "Computation speed")
