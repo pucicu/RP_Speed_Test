@@ -54,6 +54,6 @@ Not for all implementations all RQA measures are available (e.g., for simple Pyt
 The results presented here are from
 calculations performed on a 2.3 GHz Quad-Core Intel Core i7 with 16GB RAM, except
 the calculations using the _PyRQA_ package, which were performed on a Nvidia
-GPU Tesla K40c with OpenCL 1.2. For _crqa_ (R) and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, both appear only in the figure on the total computation time.
+GPU Tesla V100 with OpenCL 1.2. For _crqa_ (R) and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, both appear only in the figure on the total computation time.
 
-![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/2b43c447564eed2cecd88d6c93db2d4d2ab3e6f6/software_speed.svg "Computation speed")
+![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/fd5981ab3be782690cfb3ae27092f234915dd3cf/rp_rqa_speed-test.svg "Computation speed")
