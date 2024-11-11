@@ -1,5 +1,8 @@
 # Comparison of calculation speed for recurrence plots/ recurrence quantification analysis for MATLAB, R, Python, and Julia
 
+[![SWH](https://archive.softwareheritage.org/badge/origin/https://github.com/pucicu/RP_Speed_Test/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/pucicu/RP_Speed_Test)
+![file size](https://img.shields.io/github/repo-size/pucicu/RP_Speed_Test)
+
 ## General
 
 Measuring the calculation time for creating a recurrence plot (RP)
