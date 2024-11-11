@@ -1,0 +1,37 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Comparison of calculation speed for recurrence plots/
+  recurrence quantification analysis for MATLAB, R, Python,
+  and Julia
+message: 'If you use this software, please cite it as below.'
+type: software
+authors:
+  - given-names: Norbert
+    family-names: Marwan
+    email: marwan@pik-potsdam.de
+    affiliation: Potsdam Institute for Climate Impact Research (PIK)
+    orcid: 'https://orcid.org/0000-0003-1437-7039'
+identifiers:
+  - type: url
+    value: 'https://github.com/pucicu/RP_Speed_Test'
+    description: Github-Page
+repository-code: 'https://github.com/pucicu/RP_Speed_Test'
+abstract: >-
+  Scripts designed to compare the performance of Julia,
+  Python, R, and MATLAB in computing recurrence plots and
+  conducting recurrence quantification analysis.
+keywords:
+  - software
+  - performance testing
+  - recurrence plot
+  - recurrence quantification analysis
+  - Julia
+  - MATLAB
+  - Python
+  - R
+  - time series analysis
+  - nonlinear dynamics
+license: GPL-3.0
