@@ -8,7 +8,7 @@ python3.12 software_speed_accrqa.py --compFlag=nv_gpu
 python3.12 software_speed.py
 python3.12 software_speed_pyunicorn.py
 python3.12 software_speed_pyrqa.py
-julia software_speed.jl
-julia --threads 16 software_speed_parallel.jl
-Rscript software_speed.R
+julia --threads 1 software_speed.jl --parallel false
+julia --threads 16 software_speed_parallel.jl --parallel true
+#Rscript software_speed.R
 #matlab -nodesktop < software_speed.m

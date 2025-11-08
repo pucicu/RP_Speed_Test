@@ -5,6 +5,22 @@ using OrdinaryDiffEq
 using DelayEmbeddings
 using DynamicalSystems
 using DelimitedFiles
+using ArgParse
+
+
+# find argument for prallelisation
+s = ArgParseSettings(description = "Set parallel computation")
+
+@add_arg_table s begin
+    "--parallel"
+        help = "Set parallel computation: 'true' or 'false' (default: 'true')"
+        arg_type = String
+        default = "true"
+        choices = ["true", "false"]
+end
+
+args = parse_args(s)
+compFlag = args["parallel"]
 
 
 # the Roessler ODE
@@ -20,7 +36,7 @@ prob = ODEProblem(roessler!, [0., 0., 0.], (0.,5500.));
 sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
 
 # length of time series for RQA calculation test
-N = round.(Int, 10 .^ (2.3:.075:5.06));
+N = round.(Int, 10 .^ (log10(200.):.075:log10(500000.)));
 
 
 # calculate RP and RQA for different length
@@ -31,16 +47,16 @@ maxT = 60; # stop calculations if maxT is exceeded
 
 # dry run to pre-compile
 x = embed(sol[1,1000:1500], 3, 6);
-R = RecurrenceMatrix(x, 1.2, parallel=false);
-Q = rqa(R, theiler = 1, onlydiagonal=false);
+R = RecurrenceMatrix(x, 1.2, parallel=parallel);
+Q = rqa(R, theiler = 1, onlydiagonal=parallel, parallel=parallel);
 
 for (i,N_) in enumerate(N)
    x = embed(sol[1,1000:1000+N_], 3, 6);
    tRP_ = 0;
    tRQA_ = 0;
    for j in 1:K
-       t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=false);
-       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=false);
+       t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=parallel);
+       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=parallel, parallel=parallel);
        tRP_ = tRP_ + t1;
        tRQA_ = tRQA_ + t2;
        print("  " ,j, "\n")
@@ -56,7 +72,12 @@ end
 
 tspanRP
 
-open("time_julia.csv", "w") do io
+filename = "time_julia.csv"
+if parallel
+    filename = "time_julia_parallel.csv"
+end
+
+open(filename, "w") do io
    writedlm(io, [N tspanRP tspanRQA], ',')
 end;
        
