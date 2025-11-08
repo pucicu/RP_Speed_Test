@@ -20,7 +20,7 @@ prob = ODEProblem(roessler!, [0., 0., 0.], (0.,5500.));
 sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
 
 # length of time series for RQA calculation test
-N = round.(Int, 10 .^ (2.3:.075:5.6));
+N = round.(Int, 10 .^ (2.3:.075:5.06));
 
 
 # calculate RP and RQA for different length

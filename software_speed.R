@@ -1,10 +1,7 @@
 # speed test
 
 # import required packages
-#install.packages("nonlinearTseries")
-#install.packages("crqa")
-#install.packages("abind")
-#install.packages("tictoc")
+#install.packages(c("nonlinearTseries", "crqa", "abind", "tictoc"), repos="https://cloud.r-project.org/")
 
 require(stats)
 library(tictoc)
@@ -17,7 +14,7 @@ r = rossler(time=seq(0,4500,by = 0.05));
 x = r$x
 
 # length of time series for RQA calculation test
-N = round(10.^seq(2.3,5.06, 0.075))
+N = round(10.^seq(2.3,4.325002, 0.075))
 
 
 # calculate RP and RQA for different length
@@ -29,8 +26,21 @@ for (i in 1:length(N)) {
    t_ = 0
    for (j in 1:K) {
        start_time <- Sys.time()
-       R <- crqa(x[1000:(1000+N[i]-1)], x[1000:(1000+N[i]-1)], 3, 6, 0, 1.2, 0, 2, 2, 0, FALSE, FALSE, 'both', 'rqa','euclidean', 'continuous')
-       t_ <- t_ + as.numeric(Sys.time() - start_time)
+       R <- try(
+          crqa(
+            x[1000:(1000+N[i]-1)], 
+            x[1000:(1000+N[i]-1)], 
+            3, 6, 0, 1.2, 0, 2, 2, 0, 
+            FALSE, FALSE, 'both', 'rqa', 'euclidean', 'continuous'
+          ), 
+          silent = TRUE
+        )
+
+        if (inherits(R, "try-error")) {
+            cat("Error in crqa at i =", i, "j =", j, "- skip calculation\n")
+        }
+ 
+        t_ <- t_ + as.numeric(Sys.time() - start_time)
        cat("  ", j, "\n")
     }
     tspan[i] <- t_ / K # average calculation time
