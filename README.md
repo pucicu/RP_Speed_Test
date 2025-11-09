@@ -52,7 +52,7 @@ The recurrence analysis is performed on the time series obtained from the Rössl
 
 Not for all implementations all RQA measures are available (e.g., for simple Python code). The calculation of network measures were disabled in all code.
 
-The scripts can be called by the shell script `run_software_test.sh`. For the using the HPC Nvidia GPU nodes for `PyRQA` and `AccRQA`, slurm scripts are used: `software_speed_pyrqa.slurm`, `software_speed_accrqa.slurm`.
+The scripts can be called by the shell script `run_software_test.sh`. For the using the HPC Nvidia GPU nodes for `PyRQA` and `AccRQA`, slurm scripts are used: `software_speed_pyrqa.slurm`, `software_speed_accrqa_gpu.slurm`.
 
 
 ## Results
