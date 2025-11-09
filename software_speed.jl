@@ -16,11 +16,10 @@ s = ArgParseSettings(description = "Set parallel computation")
         help = "Set parallel computation: 'true' or 'false' (default: 'true')"
         arg_type = String
         default = "true"
-        choices = ["true", "false"]
 end
 
 args = parse_args(s)
-compFlag = args["parallel"]
+parallel = lowercase(args["parallel"]) in ["true", "t", "1"]
 
 
 # the Roessler ODE
@@ -31,8 +30,8 @@ function roessler!(dx, x, p, t)
 end
 
 # solve the ODE        
-dt = 0.05;
-prob = ODEProblem(roessler!, [0., 0., 0.], (0.,5500.));
+dt = 0.05; # sampling time
+prob = ODEProblem(roessler!, rand(3), (0.,10500.));
 sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
 
 # length of time series for RQA calculation test
@@ -43,23 +42,26 @@ N = round.(Int, 10 .^ (log10(200.):.075:log10(500000.)));
 tspanRP = zeros(length(N),1); # result vector computation time
 tspanRQA = zeros(length(N),1); # result vector computation time
 K = 10; # number of runs (for averaging time)
-maxT = 60; # stop calculations if maxT is exceeded
+maxT = 600; # stop calculations if maxT is exceeded
 
 # dry run to pre-compile
 x = embed(sol[1,1000:1500], 3, 6);
 R = RecurrenceMatrix(x, 1.2, parallel=parallel);
-Q = rqa(R, theiler = 1, onlydiagonal=parallel, parallel=parallel);
+Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel);
 
 for (i,N_) in enumerate(N)
-   x = embed(sol[1,1000:1000+N_], 3, 6);
+
    tRP_ = 0;
    tRQA_ = 0;
    for j in 1:K
-       t1 = @elapsed R = RecurrenceMatrix(x, 1.2, parallel=parallel);
-       t2 = @elapsed Q = rqa(R, theiler = 1, onlydiagonal=parallel, parallel=parallel);
+       local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
+       local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
+       local x = embed(sol[1,1000:1000+N_], 3, 6);
+       t1 = @elapsed local R = RecurrenceMatrix(x, 1.2, parallel=parallel);
+       t2 = @elapsed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel);
        tRP_ = tRP_ + t1;
        tRQA_ = tRQA_ + t2;
-       print("  " ,j, "\n")
+       #print("  " ,j, "\n")
    end
    tspanRP[i] = tRP_ / K; # average calculation time
    tspanRQA[i] = tRQA_ / K; # average calculation time
@@ -74,7 +76,7 @@ tspanRP
 
 filename = "time_julia.csv"
 if parallel
-    filename = "time_julia_parallel.csv"
+    filename = "time_julia_parallel_slurm.csv"
 end
 
 open(filename, "w") do io

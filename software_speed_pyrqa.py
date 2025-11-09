@@ -14,9 +14,6 @@ from pyrqa.computation import RQAComputation
 def roessler(x,t):
    return [-(x[1] + x[2]), x[0] + 0.25 * x[1], 0.25 + (x[0] - 4) * x[2]]
 
-# solve the ODE
-x = odeint(roessler, [0, 0, 0], np.arange(0, 5500, .05))
-
 # length of time series for RQA calculation test
 N = np.round(10**np.arange(np.log10(200.),np.log10(500000.),.075)). astype(int)
 
@@ -24,9 +21,14 @@ N = np.round(10**np.arange(np.log10(200.),np.log10(500000.),.075)). astype(int)
 # calculate RP and RQA for different length
 tspan = np.zeros(len(N)); # result vector computation time
 K = 10; # number of runs (for averaging time)
-maxT = 50; # stop calculations if maxT is exceeded
+maxT = 600; # stop calculations if maxT is exceeded
+dt = 0.05; # sampling time
 
 for i in range(0,len(tspan)):
+
+    # solve the ODE
+    x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
+
     xe = TimeSeries(x[1000:(1000+N[i]),0],
                          embedding_dimension=3,
                          time_delay=6)
@@ -39,9 +41,14 @@ for i in range(0,len(tspan)):
                                     verbose=True)
     t_ = 0
     for j in range(0, K):
-        start_time = time.time()
-        R = computation.run()
-        t_ += (time.time() - start_time)
+    
+        try:
+            start_time = time.time()
+            R = computation.run()
+            t_ += (time.time() - start_time)
+        except:
+            R = 0
+        
     tspan[i] = t_ / K # average calculation time
     print(N[i])
     

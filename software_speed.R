@@ -9,22 +9,23 @@ library(nonlinearTseries)
 library(crqa)
 library(abind)
 
-# solve the Roessler ODE        
-r = rossler(time=seq(0,4500,by = 0.05));
-x = r$x
-
 # length of time series for RQA calculation test
-N = round(10.^seq(2.3,4.325002, 0.075))
-
+N = round(10.^seq(log10(200),log10(30000), 0.075))
 
 # calculate RP and RQA for different length
 tspan = numeric(length(N)) # result vector computation time
 K = 10 # number of runs (for averaging time)
-maxT = 60 # stop calculations if maxT is exceeded
+maxT = 600 # stop calculations if maxT is exceeded
+dt = 0.05 # sampling time
 
 for (i in 1:length(N)) {
    t_ = 0
    for (j in 1:K) {
+
+       # solve the Roessler ODE        
+       r = rossler(start = runif(3, min = 0, max = 1), time=seq(0,dt*(1000+N[i]),by = dt));
+       x = r$x
+
        start_time <- Sys.time()
        R <- try(
           crqa(
@@ -41,7 +42,7 @@ for (i in 1:length(N)) {
         }
  
         t_ <- t_ + as.numeric(Sys.time() - start_time)
-       cat("  ", j, "\n")
+       #cat("  ", j, "\n")
     }
     tspan[i] <- t_ / K # average calculation time
     cat(N[i], ": ", tspan[i], "\n")

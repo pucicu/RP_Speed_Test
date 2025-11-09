@@ -4,7 +4,6 @@ rp_rqa_speed-test.eps
 software_speed.eps
 software_speed_CRP.m
 software_speed_bmfreis.py
-software_speed_pyrqa.slurm
 *.err
 *.out
 AccRQA/

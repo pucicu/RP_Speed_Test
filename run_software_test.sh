@@ -9,6 +9,6 @@ python3.12 software_speed.py
 python3.12 software_speed_pyunicorn.py
 python3.12 software_speed_pyrqa.py
 julia --threads 1 software_speed.jl --parallel false
-julia --threads 16 software_speed_parallel.jl --parallel true
-#Rscript software_speed.R
+julia --threads 32 software_speed.jl --parallel true
+Rscript software_speed.R
 #matlab -nodesktop < software_speed.m
