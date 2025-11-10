@@ -20,7 +20,7 @@ end
 
 args = parse_args(s)
 parallel = lowercase(args["parallel"]) in ["true", "t", "1"]
-
+println("Active threads: ", Threads.nthreads())
 
 # the Roessler ODE
 function roessler!(dx, x, p, t)
@@ -35,13 +35,13 @@ prob = ODEProblem(roessler!, rand(3), (0.,10500.));
 sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
 
 # length of time series for RQA calculation test
-N = round.(Int, 10 .^ (log10(200.):.075:log10(500000.)));
+N = round.(Int, 10 .^ (log10(200.):.075:log10(100000.)));
 
 
 # calculate RP and RQA for different length
 tspanRP = zeros(length(N),1); # result vector computation time
 tspanRQA = zeros(length(N),1); # result vector computation time
-K = 10; # number of runs (for averaging time)
+K = 1; # number of runs (for averaging time)
 maxT = 600; # stop calculations if maxT is exceeded
 
 # dry run to pre-compile
@@ -57,15 +57,17 @@ for (i,N_) in enumerate(N)
        local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
        local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
        local x = embed(sol[1,1000:1000+N_], 3, 6);
+
        t1 = @elapsed local R = RecurrenceMatrix(x, 1.2, parallel=parallel);
        t2 = @elapsed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel);
        tRP_ = tRP_ + t1;
        tRQA_ = tRQA_ + t2;
-       #print("  " ,j, "\n")
+       flush(stdout)
    end
    tspanRP[i] = tRP_ / K; # average calculation time
    tspanRQA[i] = tRQA_ / K; # average calculation time
    print(N_, ": ", tspanRP[i], " - ", tspanRQA[i],"\n")
+   flush(stdout)
    
    if tspanRP[i] + tspanRQA[i] >= maxT
      break
@@ -76,7 +78,7 @@ tspanRP
 
 filename = "time_julia.csv"
 if parallel
-    filename = "time_julia_parallel_slurm.csv"
+    filename = "time_julia_parallel.csv"
 end
 
 open(filename, "w") do io
