@@ -8,6 +8,10 @@ for i = 1:length(files)
    txt{i} = strrep(strrep(files(i).name,'.csv',''),'time_','');
 end
 
+% move accRQA results to the end (to have comparable plot with previous version)
+x = x([1:4, 7:numel(x), 5:6]);
+txt = txt([1:4, 7:numel(txt), 5:6]);
+
 %% set line properties
 props(1).Color = [0 .45 .74]; props(1).LineWidth = 3; props(1).LineStyle = ':';
 props(2).Color = [.85 .33 .1]; props(2).LineWidth = 2; props(2).LineStyle = '--';
@@ -22,7 +26,7 @@ props(9).Color = [.9 .3 .0]; props(9).LineWidth = 1; props(9).LineStyle = ':';
 
 %% create figure
 clf
-set(gcf, 'pos', [1487 537 1200 230])
+set(gcf, 'pos', [87 537 950 230])
 
 
 %% plot calculation time for calculation of RP
@@ -53,7 +57,7 @@ xlabel(ha2,'Length'), ylabel(ha2,'Time (sec)')
 xlabel(ha3,'Length'), ylabel(ha3,'Time (sec)')
 ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log'; ha3.YAxis.Scale='log';
 ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log'; ha3.XAxis.Scale='log';
-ha1.XLim = [100 100000]; ha2.XLim = [100 100000]; ha3.XLim = [100 100000];
+ha1.XLim = [100 500000]; ha2.XLim = [100 500000]; ha3.XLim = [100 500000];
 ha1.YLim = [0.00005 100]; ha2.YLim = [0.00005 100]; ha3.YLim = [0.00005 100];
 ha1.XTick = 10.^(2:5);
 ha2.XTick = 10.^(2:5);
@@ -77,4 +81,8 @@ ha4 = nexttile; axis off
 h = legend(ha3,strrep(txt,'_','\_'), 'location', 'layout');
 h.Layout.Tile=4;
 h.Box = 'off';
+h.FontSize=11;
+h.Parent.Position = [0.06 0.15 0.95 0.76]
 
+%% export figure as SVG
+print(gcf,'rp_rqa_speed-test.svg', '-dsvg')

@@ -52,11 +52,11 @@ The recurrence analysis is performed on the time series obtained from the Rössl
 
 Not for all implementations all RQA measures are available (e.g., for simple Python code). The calculation of network measures were disabled in all code.
 
-The scripts can be called by the shell script `run_software_test.sh`. For the using the HPC Nvidia GPU nodes for `PyRQA` and `AccRQA`, slurm scripts are used: `software_speed_pyrqa.slurm`, `software_speed_accrqa_gpu.slurm`.
+The scripts can be called by the shell script `run_software_test.sh`. For using the HPC Nvidia GPU nodes for `PyRQA` and `AccRQA`, the slurm scripts `software_speed_pyrqa.slurm` and `software_speed_accrqa_gpu.slurm` are used.
 
 
 ## Results
 
 The results presented here are from calculations performed on a single node of the "Foote" high performance cluster at PIK. A node consists of one AMD EPYC 9354 32-Core Processor with 128 CPUs, 3.245 GHz, and with 754GB RAM. The GPU calculations using the _AccRQA_ and _PyRQA_ package were performed on a Nvidia H100 HBM3 with 80GB and OpenCL 3.0 CUDA. For _crqa_ (R), _AccRQA_, and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, they appear only in the figure on the total computation time.
 
-![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/ee9347c60c1a1266e31da7c8609a969d8d38a061/rp_rqa_speed-test.svg "Computation speed")
+![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/master/rp_rqa_speed-test.svg "Computation speed")
