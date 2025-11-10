@@ -39,6 +39,7 @@ for (i in 1:length(N)) {
 
         if (inherits(R, "try-error")) {
             cat("Error in crqa at i =", i, "j =", j, "- skip calculation\n")
+            t_ <- NaN
         }
  
         t_ <- t_ + as.numeric(Sys.time() - start_time)

@@ -40,6 +40,9 @@ for i in range(0,len(tspanRP)):
             tRQA_ += (time.time() - start_time)
         except:
             Q = 0
+            tP_ = np.nan
+            tRQA_ = np.nan
+            break
         #print("  ", j)
     tspanRP[i] = tRP_ / K # average calculation time
     tspanRQA[i] = tRQA_ / K # average calculation time

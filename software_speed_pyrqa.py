@@ -48,6 +48,8 @@ for i in range(0,len(tspan)):
             t_ += (time.time() - start_time)
         except:
             R = 0
+            t_ = np.nan
+            break
         
     tspan[i] = t_ / K # average calculation time
     print(N[i], ": ", tspan[i])
