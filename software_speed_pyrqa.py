@@ -50,7 +50,8 @@ for i in range(0,len(tspan)):
             R = 0
         
     tspan[i] = t_ / K # average calculation time
-    print(N[i])
+    print(N[i], ": ", tspan[i])
+    
     
     if tspan[i] >= maxT:
        break

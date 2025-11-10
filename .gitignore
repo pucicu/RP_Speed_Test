@@ -10,3 +10,6 @@ AccRQA/
 recurrence_cpp/
 recurrence_python/
 rp/
+.venv
+__pycache__
+.nfs*

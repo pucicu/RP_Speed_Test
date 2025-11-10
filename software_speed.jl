@@ -41,7 +41,7 @@ N = round.(Int, 10 .^ (log10(200.):.075:log10(100000.)));
 # calculate RP and RQA for different length
 tspanRP = zeros(length(N),1); # result vector computation time
 tspanRQA = zeros(length(N),1); # result vector computation time
-K = 1; # number of runs (for averaging time)
+K = 10; # number of runs (for averaging time)
 maxT = 600; # stop calculations if maxT is exceeded
 
 # dry run to pre-compile
