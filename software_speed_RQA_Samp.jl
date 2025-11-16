@@ -23,12 +23,12 @@ end
 
 # solve the ODE        
 dt = 0.05; # sampling time
-prob = ODEProblem(roessler!, rand(3), (0.,10500.));
+prob = ODEProblem(roessler!, rand(3), (0.,20500.));
 sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
 x = embed(sol[1,1000:1500], 3, 6);
 
 # length of time series for RQA calculation test
-N = round.(Int, 10 .^ (log10(200.):.075:log10(100000.)));
+N = round.(Int, 10 .^ (log10(200.):.075:log10(500000.)));
 
 
 # calculate  RQA for different length
@@ -51,9 +51,14 @@ for (i,N_) in enumerate(N)
        local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
        local x = embed(sol[1,1000:1000+N_], 3, 6);
        x = reduce(hcat,x)'
-       local M = 4 * length(x) # number of random subsamples 
-       t = @elapsed local Q = rqa(x, 1.2, M);
-       tRQA_ = tRQA_ + t;
+       try
+           local M = 4 * length(x) # number of random subsamples 
+           t = @elapsed local Q = rqa(x, 1.2, M);
+           tRQA_ = tRQA_ + t;
+       catch
+           tRQA_ = NaN
+           println("ERROR: Skip")
+       end
        flush(stdout)
    end
    tspanRQA[i] = tRQA_ / K; # average calculation time
