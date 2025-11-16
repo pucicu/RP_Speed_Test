@@ -1,0 +1,75 @@
+# speed test
+
+# import required packages
+using OrdinaryDiffEq
+using DelayEmbeddings
+using DelimitedFiles
+include("RPLineLengths.jl")
+
+# Define RQA using sampling approach RQA_Samp
+function rqa(x,e,M)
+    p = get_hist_diagonal_sampled(x, e, M);
+    DET = sum((2:length(p)) .* p[2:end]) / sum((1:length(p)) .* p)
+    L = sum((2:length(p)) .* p[2:end]) / sum(p[2:end])
+end
+
+
+# the Roessler ODE
+function roessler!(dx, x, p, t)
+    dx[1] = -(x[2] + x[3]);
+    dx[2] = x[1] + 0.25 * x[2];
+    dx[3] = 0.25 + (x[1] - 4) * x[3];
+end
+
+# solve the ODE        
+dt = 0.05; # sampling time
+prob = ODEProblem(roessler!, rand(3), (0.,10500.));
+sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
+x = embed(sol[1,1000:1500], 3, 6);
+
+# length of time series for RQA calculation test
+N = round.(Int, 10 .^ (log10(200.):.075:log10(100000.)));
+
+
+# calculate  RQA for different length
+tspanRP = zeros(length(N),1); # result vector computation time
+tspanRQA = zeros(length(N),1); # result vector computation time
+K = 10; # number of runs (for averaging time)
+maxT = 600; # stop calculations if maxT is exceeded
+M = 4 * length(x) # number of random subsamples for RQA_Samp
+
+
+# dry run to pre-compile
+x = reduce(hcat,x)'
+Q = rqa(x, 1.2, M);
+
+for (i,N_) in enumerate(N)
+
+   tRQA_ = 0;
+   for j in 1:K
+       local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
+       local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
+       local x = embed(sol[1,1000:1000+N_], 3, 6);
+       x = reduce(hcat,x)'
+       local M = 4 * length(x) # number of random subsamples 
+       t = @elapsed local Q = rqa(x, 1.2, M);
+       tRQA_ = tRQA_ + t;
+       flush(stdout)
+   end
+   tspanRQA[i] = tRQA_ / K; # average calculation time
+   print(N_, ": ", tspanRQA[i],"\n")
+   flush(stdout)
+   
+   if tspanRQA[i] >= maxT
+     break
+   end
+end
+
+
+filename = "time_julia_RQA_Samp.csv"
+
+open(filename, "w") do io
+   writedlm(io, [N tspanRP tspanRQA], ',')
+end;
+       
+

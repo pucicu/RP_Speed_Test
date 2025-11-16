@@ -24,6 +24,8 @@ Software | Package/ URL
 MATLAB   | simple _rp.m_ v1.2 code <https://github.com/pucicu/rp>
 R        | _crqa_ v2.0.2 <https://github.com/morenococo/crqa>
 Julia    | _DynamicalSystems.jl_ v1.4.0 <https://juliadynamics.github.io/DynamicalSystems.jl/dev/>
+Julia    | _RecurrenceMicrostatesAnalysis.jl_ 0.2.24 <https://github.com/DynamicsUFPR/RecurrenceMicrostatesAnalysis.jl>
+Julia    | _RQA_Samp_ <https://doi.org/10.5281/zenodo.17620044>
 Python   | simple RP and RQA implementation (included)
 Python   | _pyunicorn_ v0.6.1 <https://pypi.org/project/pyunicorn/>
 Python   | _PyRQA_ v8.0.0 <https://pypi.org/project/PyRQA/>
@@ -41,7 +43,7 @@ Software | Requirements
 ---------|--------------
 MATLAB   | install the code from <https://github.com/pucicu/rp> as a subfolder `rp`
 R        | packages `nonlinearTseries`, `crqa`, `abind`, `tictoc`
-Julia    | packages `OrdinaryDiffEq`, `DelayEmbeddings`, `DynamicalSystems`, `DelimitedFiles`
+Julia    | packages `OrdinaryDiffEq`, `DelayEmbeddings`, `DynamicalSystems`, `DelimitedFiles`, `RecurrenceMicrostatesAnalysis`; and file `RPLineLengths.jl`
 Python   | packages `PyRQA`, `pyunicorn`, `accrqa`, `numpy`, `scipy`
 
 For Python, see file `requirements.txt` (you can use `pip install -r requirements.txt` to get the required Python packages).
@@ -50,13 +52,13 @@ For Python, see file `requirements.txt` (you can use `pip install -r requirement
 
 The recurrence analysis is performed on the time series obtained from the Rössler system with growing length, starting with _N_ = 200 (ending at max. _N_ = 500,000), increasing in steps to provide equidistant points along the _x_-axis in a log-log plot. The increase of length will be stopped when the calculation time exceeds 600 sec. For each selected length, the calculation time is measured 10 times and then averaged.
 
-Not for all implementations all RQA measures are available (e.g., for simple Python code). The calculation of network measures were disabled in all code.
+Not for all implementations all RQA measures are available (e.g., for simple Python code). The calculation of network measures were disabled in all examples.
 
 The scripts can be called by the shell script `run_software_test.sh`. For using the HPC Nvidia GPU nodes for `PyRQA` and `AccRQA`, the slurm scripts `software_speed_pyrqa.slurm` and `software_speed_accrqa_gpu.slurm` are used.
 
 
 ## Results
 
-The results presented here are from calculations performed on a single node of the "Foote" high performance cluster at PIK. A node consists of one AMD EPYC 9354 32-Core Processor with 128 CPUs, 3.245 GHz, and with 754GB RAM. The GPU calculations using the _AccRQA_ and _PyRQA_ package were performed on a Nvidia H100 HBM3 with 80GB and OpenCL 3.0 CUDA. For _crqa_ (R), _AccRQA_, and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, they appear only in the figure on the total computation time.
+The results presented here are from calculations performed on a single node of the "Foote" high performance cluster at PIK. A node consists of one AMD EPYC 9354 32-Core Processor with 128 CPUs, 3.245 GHz, and with 754GB RAM. The GPU calculations using the _AccRQA_ and _PyRQA_ package were performed on a Nvidia H100 HBM3 with 80GB and OpenCL 3.0 CUDA. For _crqa_ (R), _AccRQA_, _RQA_Samp_, _RecurrenceMicrostates_, and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, they appear only in the figure on the total computation time.
 
 ![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/master/rp_rqa_speed-test.svg "Computation speed")
