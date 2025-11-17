@@ -51,8 +51,8 @@ for (i,N_) in enumerate(N)
        local x = embed(sol[1,1000:1000+N_], 3, 6);
        x = reduce(hcat,x)'
        try
-           t = @elapsed local Q = rqa(x, 1.2, m);
-           tRQA_ = tRQA_ + t;
+           t = @timed local Q = rqa(x, 1.2, m);
+           tRQA_ = tRQA_ + t.time;
        catch
            tRQA_ = NaN
            println("ERROR: Skip")

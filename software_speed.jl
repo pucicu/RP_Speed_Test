@@ -58,10 +58,10 @@ for (i,N_) in enumerate(N)
        local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
        local x = embed(sol[1,1000:1000+N_], 3, 6);
 
-       t1 = @elapsed local R = RecurrenceMatrix(x, 1.2, parallel=parallel);
-       t2 = @elapsed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel);
-       tRP_ = tRP_ + t1;
-       tRQA_ = tRQA_ + t2;
+       t1 = @timed local R = RecurrenceMatrix(x, 1.2, parallel=parallel)
+       t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel)
+       tRP_ = tRP_ + t1.time;
+       tRQA_ = tRQA_ + t2.time;
        flush(stdout)
    end
    tspanRP[i] = tRP_ / K; # average calculation time
@@ -76,9 +76,9 @@ end
 
 tspanRP
 
-filename = "time_julia.csv"
+filename = "time_julia_2.csv"
 if parallel
-    filename = "time_julia_parallel.csv"
+    filename = "time_julia_parallel_2.csv"
 end
 
 open(filename, "w") do io

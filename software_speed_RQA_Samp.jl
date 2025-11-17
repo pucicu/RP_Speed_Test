@@ -53,8 +53,8 @@ for (i,N_) in enumerate(N)
        x = reduce(hcat,x)'
        try
            local M = 4 * length(x) # number of random subsamples 
-           t = @elapsed local Q = rqa(x, 1.2, M);
-           tRQA_ = tRQA_ + t;
+           t = @timed local Q = rqa(x, 1.2, M);
+           tRQA_ = tRQA_ + t.time;
        catch
            tRQA_ = NaN
            println("ERROR: Skip")
