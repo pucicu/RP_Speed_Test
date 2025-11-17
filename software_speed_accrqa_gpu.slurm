@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #SBATCH --qos=gpushort
-#SBATCH --job-name=pyrqa_speedtest
+#SBATCH --job-name=accrqa_gpu_speedtest
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
-#SBATCH --time=30
+#SBATCH --time=00:30:00
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:4
 
