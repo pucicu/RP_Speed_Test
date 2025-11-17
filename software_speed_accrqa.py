@@ -41,9 +41,16 @@ K = 10; # number of runs (for averaging time)
 maxT = 600; # stop calculations if maxT is exceeded
 dt = 0.05; # sampling time
 
+
 for i in range(0,len(tspanRP)):
     tRP_ = 0
     tRQA_ = 0
+    # initialize calculation (avoids artifical large compute times for first run)
+    x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
+    output_RR = rqa.RR(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+    output_DET = rqa.DET(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+    output_LAM = rqa.LAM(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+    
     for j in range(0,K):
 
         # solve the ODE
