@@ -72,7 +72,7 @@ end
 filename = "time_julia_microstates.csv"
 
 open(filename, "w") do io
-   writedlm(io, [N tspanRP tspanRQA], ',')
+   writedlm(io, [N tspanRQA], ',')
 end;
        
 
