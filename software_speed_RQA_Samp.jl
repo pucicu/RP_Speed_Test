@@ -6,7 +6,10 @@ using DelayEmbeddings
 using DelimitedFiles
 include("RPLineLengths.jl")
 
-# Define RQA using sampling approach RQA_Samp
+# results file
+filename = "time_julia_RQA_Samp.csv"
+
+# define RQA using sampling approach RQA_Samp
 function rqa(x,e,M)
     p = get_hist_diagonal_sampled(x, e, M);
     DET = sum((2:length(p)) .* p[2:end]) / sum((1:length(p)) .* p)
@@ -50,7 +53,7 @@ for (i,N_) in enumerate(N)
        local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
        local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
        local x = embed(sol[1,1000:1000+N_], 3, 6);
-       x = reduce(hcat,x)'
+       x = reduce(hcat,x)';
        try
            local M = 4 * length(x) # number of random subsamples 
            t = @timed local Q = rqa(x, 1.2, M);
@@ -65,16 +68,12 @@ for (i,N_) in enumerate(N)
    print(N_, ": ", tspanRQA[i],"\n")
    flush(stdout)
    
+   # save results
+   open(filename, "w") do io
+      writedlm(io, [N tspanRQA], ',')
+   end;
+
    if tspanRQA[i] >= maxT
      break
    end
 end
-
-
-filename = "time_julia_RQA_Samp.csv"
-
-open(filename, "w") do io
-   writedlm(io, [N tspanRQA], ',')
-end;
-       
-

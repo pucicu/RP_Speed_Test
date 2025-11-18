@@ -9,6 +9,9 @@ library(nonlinearTseries)
 library(crqa)
 library(abind)
 
+# results file
+filename = 'time_R.csv'
+
 # length of time series for RQA calculation test
 N = round(10.^seq(log10(200),log10(30000), 0.075))
 
@@ -47,13 +50,12 @@ for (i in 1:length(N)) {
     }
     tspan[i] <- t_ / K # average calculation time
     cat(N[i], ": ", tspan[i], "\n")
-    
+        
+    # save results
+    ex = abind(N, tspan, along=2)
+    write.table(ex, file = filename, col.names=FALSE, row.names=FALSE)
+
     if (tspan[i] >= maxT) {
        break
     }
-}
-print(tspan)
-
-ex = abind(N, tspan, along=2)
-     
-write.table(ex, file = "time_R.csv", col.names=FALSE, row.names=FALSE)
+}    

@@ -6,7 +6,10 @@ using DelayEmbeddings
 using DelimitedFiles
 using RecurrenceMicrostatesAnalysis
 
-# Define RQA using microstates approach
+# results file
+filename = "time_julia_microstates.csv"
+
+# define RQA using microstates approach
 function rqa(x,e,m)
     dist = distribution(x', e, m);
     RR = rrate(dist)           # Recurrence rate
@@ -62,17 +65,12 @@ for (i,N_) in enumerate(N)
    tspanRQA[i] = tRQA_ / K; # average calculation time
    print(N_, ": ", tspanRQA[i],"\n")
    flush(stdout)
+
+   open(filename, "w") do io
+      writedlm(io, [N tspanRQA], ',')
+   end;
    
    if tspanRQA[i] >= maxT
      break
    end
 end
-
-
-filename = "time_julia_microstates.csv"
-
-open(filename, "w") do io
-   writedlm(io, [N tspanRQA], ',')
-end;
-       
-

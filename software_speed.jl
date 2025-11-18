@@ -20,6 +20,16 @@ end
 
 args = parse_args(s)
 parallel = lowercase(args["parallel"]) in ["true", "t", "1"]
+
+
+# results file
+filename = "time_julia.csv"
+if parallel
+    filename = "time_julia_parallel.csv"
+end
+
+
+
 println("Active threads: ", Threads.nthreads())
 
 # the Roessler ODE
@@ -74,20 +84,12 @@ for (i,N_) in enumerate(N)
    print(N_, ": ", tspanRP[i], " - ", tspanRQA[i],"\n")
    flush(stdout)
    
+   # save results
+   open(filename, "w") do io
+      writedlm(io, [N tspanRP tspanRQA], ',')
+   end;
+   
    if tspanRP[i] + tspanRQA[i] >= maxT
      break
    end
 end
-
-tspanRP
-
-filename = "time_julia_2.csv"
-if parallel
-    filename = "time_julia_parallel_2.csv"
-end
-
-open(filename, "w") do io
-   writedlm(io, [N tspanRP tspanRQA], ',')
-end;
-       
-

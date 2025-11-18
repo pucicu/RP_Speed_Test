@@ -26,6 +26,10 @@ args = parser.parse_args()
 compFlag = args.compFlag
 
 
+# results file
+filename = f'time_python_accrqa_{compFlag}.csv'
+
+
 # the Roessler ODE
 def roessler(x,t):
    return [-(x[1] + x[2]), x[0] + 0.25 * x[1], 0.25 + (x[0] - 4) * x[2]]
@@ -68,10 +72,8 @@ for i in range(0,len(tspanRP)):
     tspanRQA[i] = tRQA_ / K # average calculation time
     print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
     
+    # save results
+    np.savetxt(filename,list(zip(N, tspanRQA)))
+    
     if tspanRP[i] + tspanRQA[i] >= maxT:
        break
-
-tspanRP
-
-np.savetxt(f'time_python_accrqa_{compFlag}.csv',list(zip(N, tspanRQA)))
-

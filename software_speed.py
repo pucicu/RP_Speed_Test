@@ -6,6 +6,9 @@ import numpy as np
 import time
 from rp import *
 
+# results file
+filename = 'time_python_default.csv'
+
 # the Roessler ODE
 def roessler(x,t):
    return [-(x[1] + x[2]), x[0] + 0.25 * x[1], 0.25 + (x[0] - 4) * x[2]]
@@ -48,11 +51,9 @@ for i in range(0,len(tspanRP)):
     tspanRP[i] = tRP_ / K # average calculation time
     tspanRQA[i] = tRQA_ / K # average calculation time
     print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
+
+    # save results
+    np.savetxt('time_python_default.csv',list(zip(N, tspanRP, tspanRQA)))
     
     if tspanRP[i] + tspanRQA[i] >= maxT:
        break
-
-tspanRP
-
-np.savetxt('time_python_default.csv',list(zip(N, tspanRP, tspanRQA)))
-

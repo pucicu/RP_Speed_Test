@@ -10,6 +10,9 @@ from pyrqa.neighbourhood import FixedRadius
 from pyrqa.metric import EuclideanMetric
 from pyrqa.computation import RQAComputation
 
+# results file
+filename = 'time_python_pyrqa.csv'
+
 # the Roessler ODE
 def roessler(x,t):
    return [-(x[1] + x[2]), x[0] + 0.25 * x[1], 0.25 + (x[0] - 4) * x[2]]
@@ -54,13 +57,8 @@ for i in range(0,len(tspan)):
     tspan[i] = t_ / K # average calculation time
     print(N[i], ": ", tspan[i])
     
+    # save results
+    np.savetxt(filename,list(zip(N[4:],tspan[4:])))
     
     if tspan[i] >= maxT:
        break
-
-tspan
-
-np.savetxt('time_python_pyrqa.csv',list(zip(N[4:],tspan[4:])))
-
-
-

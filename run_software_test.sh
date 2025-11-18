@@ -13,4 +13,5 @@ julia --threads 1 software_speed_RQA_Samp.jl
 julia --threads 1 software_speed.jl --parallel false
 julia --threads 32 software_speed.jl --parallel true
 Rscript software_speed.R
-#matlab -nodesktop < software_speed.m
+# #matlab -nodesktop < software_speed.m
+
