@@ -4,10 +4,10 @@
 using OrdinaryDiffEq
 using DelayEmbeddings
 using DelimitedFiles
-include("RPLineLengths.jl")
+include("../Libs/RPLineLengths.jl")
 
 # results file
-filename = "time_julia_RQA_Samp.csv"
+filename = "../Results/time_julia_RQA_Samp.csv"
 
 # define RQA using sampling approach RQA_Samp
 function rqa(x,e,M)
@@ -46,34 +46,34 @@ M = 4 * length(x) # number of random subsamples for RQA_Samp
 x = reduce(hcat,x)'
 Q = rqa(x, 1.2, M);
 
-for (i,N_) in enumerate(N)
+open(filename, "w") do io
+   for (i,N_) in enumerate(N)
 
-   tRQA_ = 0;
-   for j in 1:K
-       local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
-       local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
-       local x = embed(sol[1,1000:1000+N_], 3, 6);
-       x = reduce(hcat,x)';
-       try
-           local M = 4 * length(x) # number of random subsamples 
-           t = @timed local Q = rqa(x, 1.2, M);
-           tRQA_ = tRQA_ + t.time;
-       catch
-           tRQA_ = NaN
-           println("ERROR: Skip")
-       end
-       flush(stdout)
-   end
-   tspanRQA[i] = tRQA_ / K; # average calculation time
-   print(N_, ": ", tspanRQA[i],"\n")
-   flush(stdout)
-   
-   # save results
-   open(filename, "w") do io
-      writedlm(io, [N tspanRQA], ',')
-   end;
+      tRQA_ = 0;
+      for j in 1:K
+          local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
+          local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
+          local x = embed(sol[1,1000:1000+N_], 3, 6);
+          x = reduce(hcat,x)';
+          try
+              local M = 4 * length(x) # number of random subsamples 
+              t = @timed local Q = rqa(x, 1.2, M);
+              tRQA_ = tRQA_ + t.time;
+          catch
+              tRQA_ = NaN
+              println("ERROR: Skip")
+          end
+          flush(stdout)
+      end
+      tspanRQA[i] = tRQA_ / K; # average calculation time
+      print(N_, ": ", tspanRQA[i],"\n")
+      flush(stdout)
 
-   if tspanRQA[i] >= maxT
-     break
+      # save results
+      write(io, "$N_, $(tspanRQA[i])\n")
+
+      if tspanRQA[i] >= maxT
+        break
+      end
    end
 end

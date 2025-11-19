@@ -2,8 +2,10 @@
 
 %% enable rp tools
 % first clone from https://github.com/pucicu/rp to subfolder rp before you can use it
-addpath('./rp')
+addpath('../Libs/rp')
 
+%% results file
+filename = '../Results/time_matlab_vector.csv';
 
 %% the Roessler ODE
 r = @(t,x) [-(x(2) + x(3)); 
@@ -55,16 +57,13 @@ for i = 1:length(N)
     tspanRQA(i) = tRQA_ / K; % average calculation time
     disp(sprintf('%i: %f %f', N(i), tspanRP(i), tspanRQA(i)))
     
+    % save results
+    ex = [N(:) tspanRP(:) tspanRQA(:)];
+    save(filename,'ex','-ascii','-tabs')
+
     if tspanRP(i) + tspanRQA(i) >= maxT, break, end
     
 end
 N(1:4) = []; tspanRP(1:4) = []; tspanRQA(1:4) = [];% remove first points before N=200
-
-tspanRP
-
-
-ex = [N(:) tspanRP(:) tspanRQA(:)];
-save time_matlab_vector.csv ex -ascii -tabs
-
 
 exit

@@ -23,9 +23,9 @@ parallel = lowercase(args["parallel"]) in ["true", "t", "1"]
 
 
 # results file
-filename = "time_julia.csv"
+filename = "../Results/time_julia_single.csv"
 if parallel
-    filename = "time_julia_parallel.csv"
+    filename = "../Results/time_julia_parallel.csv"
 end
 
 
@@ -59,37 +59,37 @@ x = embed(sol[1,1000:1500], 3, 6);
 R = RecurrenceMatrix(x, 1.2, parallel=parallel);
 Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel);
 
-for (i,N_) in enumerate(N)
+open(filename, "w") do io
+   for (i,N_) in enumerate(N)
 
-   tRP_ = 0;
-   tRQA_ = 0;
-   for j in 1:K
-       local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
-       local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
-       local x = embed(sol[1,1000:1000+N_], 3, 6);
+      tRP_ = 0;
+      tRQA_ = 0;
+      for j in 1:K
+          local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
+          local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
+          local x = embed(sol[1,1000:1000+N_], 3, 6);
 
-       try
-          t1 = @timed local R = RecurrenceMatrix(x, 1.2, parallel=parallel)
-          t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel)
-          tRP_ = tRP_ + t1.time;
-          tRQA_ = tRQA_ + t2.time;
-       catch
-          tRP_ = NaN
-          tRQA_ = NaN
-       end
-       flush(stdout)
-   end
-   tspanRP[i] = tRP_ / K; # average calculation time
-   tspanRQA[i] = tRQA_ / K; # average calculation time
-   print(N_, ": ", tspanRP[i], " - ", tspanRQA[i],"\n")
-   flush(stdout)
-   
-   # save results
-   open(filename, "w") do io
-      writedlm(io, [N tspanRP tspanRQA], ',')
-   end;
-   
-   if tspanRP[i] + tspanRQA[i] >= maxT
-     break
+          try
+             t1 = @timed local R = RecurrenceMatrix(x, 1.2, parallel=parallel)
+             t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel)
+             tRP_ = tRP_ + t1.time;
+             tRQA_ = tRQA_ + t2.time;
+          catch
+             tRP_ = NaN
+             tRQA_ = NaN
+          end
+          flush(stdout)
+      end
+      tspanRP[i] = tRP_ / K; # average calculation time
+      tspanRQA[i] = tRQA_ / K; # average calculation time
+      print(N_, ": ", tspanRP[i], " - ", tspanRQA[i],"\n")
+      flush(stdout)
+
+      # save results
+      write(io, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
+
+      if tspanRP[i] + tspanRQA[i] >= maxT
+        break
+      end
    end
 end
