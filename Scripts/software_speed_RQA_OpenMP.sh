@@ -9,9 +9,10 @@ RESULTSFILE="../Results/time_RQA_OpenMP.csv"
 EXEC="../Libs/RQA_OpenMP/rqa_omp"
 ARGS=(-i $TMPFILE -e .8 -s)
 
-REPEATS=10
+REPEATS=1
 
-module load gcc/14.1.0
+#module load gcc/14.1.0
+module load llvm
 
 # ----------------------------------------
 # Create RESULTSFILE file

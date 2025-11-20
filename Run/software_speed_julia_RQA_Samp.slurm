@@ -1,14 +1,13 @@
 #!/bin/bash
 
-#SBATCH --qos=short
+#SBATCH --qos=priority
 #SBATCH --job-name=julia_RQA_Samp_speedtest
 #SBATCH --output=../Logs/%x-%j.out
 #SBATCH --error=../Logs/%x-%j.err
-#SBATCH --time=01:30:00
+#SBATCH --time=03:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --exclusive
 
 echo "------------------------------------------------------------"
 echo "SLURM JOB ID: $SLURM_JOBID"

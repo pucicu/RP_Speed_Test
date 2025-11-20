@@ -4,10 +4,10 @@
 #SBATCH --job-name=julia_parallel_speedtest
 #SBATCH --output=../Logs/%x-%j.out
 #SBATCH --error=../Logs/%x-%j.err
-#SBATCH --time=01:30:00
+#SBATCH --time=03:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=400000
+#SBATCH --mem=620G
 #SBATCH --cpus-per-task=128
 
 echo "------------------------------------------------------------"

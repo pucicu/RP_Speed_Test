@@ -87,6 +87,7 @@ open(filename, "w") do io
 
       # save results
       write(io, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
+      flush(io)
 
       if tspanRP[i] + tspanRQA[i] >= maxT
         break

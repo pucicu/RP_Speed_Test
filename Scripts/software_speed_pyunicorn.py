@@ -14,7 +14,7 @@ def roessler(x,t):
    return [-(x[1] + x[2]), x[0] + 0.25 * x[1], 0.25 + (x[0] - 4) * x[2]]
 
 # length of time series for RQA calculation test
-N = np.round(10**np.arange(np.log10(200.),np.log10(500000.),.075)). astype(int)
+N = np.round(10**np.arange(np.log10(200.),np.log10(60000.),.075)). astype(int)
 
 
 # calculate RP and RQA for different length
@@ -54,6 +54,7 @@ with open(filename, "w") as f:
 
        # save results
        f.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
+       f.flush()
 
        if tspanRP[i] + tspanRQA[i] >= maxT:
           break

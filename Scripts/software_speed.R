@@ -13,7 +13,7 @@ library(abind)
 filename = '../Results/time_R.csv'
 
 # length of time series for RQA calculation test
-N = round(10.^seq(log10(200),log10(3000), 0.075))
+N = round(10.^seq(log10(200),log10(100000), 0.075))
 
 # calculate RP and RQA for different length
 tspan = numeric(length(N)) # result vector computation time

@@ -13,10 +13,10 @@ echo "SLURM JOB ID: $SLURM_JOBID"
 echo "------------------------------------------------------------"
 
 ## 
-module load python/3.12.3
-module load cuda/12.6.0 
+module load python
+module load cuda
 
 source ../.venv/bin/activate  
 export PYTHONUNBUFFERED=1
 
-python3.12 ../Scripts/software_speed_pyrqa.py
+python ../Scripts/software_speed_pyrqa.py

@@ -19,7 +19,7 @@ def roessler(x,t):
 x = odeint(roessler, np.random.rand(3), np.arange(0, 5500, .05))
 
 # length of time series for RQA calculation test
-N = np.round(10**np.arange(np.log10(200.),np.log10(500000.),.075)). astype(int)
+N = np.round(10**np.arange(np.log10(200.),np.log10(100000.),.075)). astype(int)
 
 
 # calculate RP and RQA for different length
@@ -57,6 +57,10 @@ with open(filename, "w") as f:
 
        # save results
        f.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
+       f.flush()
 
        if tspanRP[i] + tspanRQA[i] >= maxT:
           break
+
+for n, rp, rqa in zip(N, tspanRP, tspanRQA):
+   f.write(f"{n}, {rp}, {rqa}\n")

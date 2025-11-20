@@ -71,6 +71,7 @@ open(filename, "w") do io
 
       # save results
       write(io, "$N_, $(tspanRQA[i])\n")
+      flush(io)
 
       if tspanRQA[i] >= maxT
         break

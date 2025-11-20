@@ -13,9 +13,9 @@ echo "SLURM JOB ID: $SLURM_JOBID"
 echo "------------------------------------------------------------"
 
 ## 
-module load python/3.12.3
-module load cuda/12.6.0 
+module load python openmpi/5.0.8 gcc/13.2.0 cuda
 
 source ../.venv/bin/activate  
+export PYTHONUNBUFFERED=1
 
-python3.12 ../Scripts/software_speed_accrqa.py --compFlag=cpu
+python ../Scripts/software_speed_accrqa.py --compFlag=cpu
