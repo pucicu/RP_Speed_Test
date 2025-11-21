@@ -62,5 +62,3 @@ with open(filename, "w") as f:
        if tspanRP[i] + tspanRQA[i] >= maxT:
           break
 
-for n, rp, rqa in zip(N, tspanRP, tspanRQA):
-   f.write(f"{n}, {rp}, {rqa}\n")
