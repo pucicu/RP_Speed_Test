@@ -5,12 +5,12 @@
 # CONFIG
 # ----------------------------------------
 DATAFILE="../Libs/RQA_OpenMP/lorenz.dat"
-TMPFILE="tmp_data.dat"
-RESULTSFILE="../Results/time_RQA_OpenMP.csv"
-EXEC="../Libs/RQA_OpenMP/rqa_omp"
-ARGS=(-i $TMPFILE -e 1.04 -s)
+TMPFILE="tmp_data_hpc.dat"
+RESULTSFILE="../Results/time_RQA_HPC.csv"
+EXEC="../Libs/RQA_HPC/build/RQA_MPI"
+ARGS=(3 30 2 1 1.04 0 0 $TMPFILE)
 
-REPEATS=10
+REPEATS=2
 
 # ----------------------------------------
 # Create RESULTSFILE file
@@ -27,7 +27,7 @@ generate_N_list() {
     awk '
         BEGIN {
             start = log(200)/log(10);
-            stop  = log(1000000)/log(10);
+            stop  = log(500000)/log(10);
             step = 0.075;
 
             for (x=start; x<=stop+1e-12; x+=step) {
@@ -38,6 +38,7 @@ generate_N_list() {
     '
 }
 
+
 # ----------------------------------------
 # Main Loop
 # ----------------------------------------
@@ -46,7 +47,7 @@ for N in $(generate_N_list); do
     echo "Processing N=$N"
 
     # Extract first N lines from the time series
-    head -n "$N" "$DATAFILE" > "$TMPFILE"
+    head -n "$N" "$DATAFILE" | awk '{print $1}' > "$TMPFILE"
 
     # Measure runtime (10x)
     sum=0
@@ -54,9 +55,10 @@ for N in $(generate_N_list); do
     for ((i=1; i<=REPEATS; i++)); do
 
         start=$(date +%s.%N)
-        "$EXEC" "${ARGS[@]}"
+        srun -n "$SLURM_NTASKS" "$EXEC" "${ARGS[@]}"
         end=$(date +%s.%N)
         t=$(echo "$end - $start" | bc)
+        echo $t
 
         # Sum up times
         sum=$(echo "$sum + $t" | bc -l)

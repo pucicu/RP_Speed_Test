@@ -13,7 +13,7 @@ echo "SLURM JOB ID: $SLURM_JOBID"
 echo "------------------------------------------------------------"
 
 ## 
-module load python openmpi/5.0.8 gcc/13.2.0 cuda
+module load python openmpi/5.0.8 gcc/13.2.0 cuda openssl/3.0.12 libffi/3.4.4
 
 source ../.venv/bin/activate  
 export PYTHONUNBUFFERED=1

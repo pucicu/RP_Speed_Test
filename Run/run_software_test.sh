@@ -17,15 +17,13 @@ if (( SUBMIT_HPC == 1 )); then
    sbatch software_speed_pyunicorn.slurm
    sbatch software_speed_R.slurm
    sbatch software_speed_RQA_OpenMP.slurm
+   sbatch software_speed_RQA_HPC.slurm
 
 else
    # run on login node (or any other local compute node)
    
    # if computer is using module based software management:
-   module load python/3.12.3
-   module load cuda/12.6.0 
-   module load julia/1.11.7
-   module load R/4.3.2
+   module load python cuda julia R
    
    # use local Python environment
    source ../.venv/bin/activate  

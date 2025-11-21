@@ -27,6 +27,20 @@ K = 10; # number of runs (for averaging time)
 maxT = 600; # stop calculations if maxT is exceeded
 dt = 0.05; # sampling time
 
+
+# dry run to setup environment
+x = odeint(roessler, np.random.rand(3), np.arange(0, dt*5000, .05))
+
+xe = TimeSeries(x[:,0], embedding_dimension=3, time_delay=6)
+settings = Settings(xe,
+           analysis_type=Classic,
+           neighbourhood=FixedRadius(1.2),
+           similarity_measure=EuclideanMetric,
+           theiler_corrector=1)
+computation = RQAComputation.create(settings, verbose=True)
+R = computation.run()
+
+# computation loop testing different time series lenghts
 with open(filename, "w") as f:
    for i in range(0,len(tspan)):
 
@@ -34,15 +48,15 @@ with open(filename, "w") as f:
        x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
 
        xe = TimeSeries(x[1000:(1000+N[i]),0],
-                            embedding_dimension=3,
-                            time_delay=6)
+                       embedding_dimension=3,
+                       time_delay=6)
        settings = Settings(xe,
                        analysis_type=Classic,
                        neighbourhood=FixedRadius(1.2),
                        similarity_measure=EuclideanMetric,
                        theiler_corrector=1)
        computation = RQAComputation.create(settings,
-                                       verbose=True)
+                       verbose=True)
        t_ = 0
        for j in range(0, K):
 
