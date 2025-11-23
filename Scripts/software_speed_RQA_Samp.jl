@@ -31,7 +31,7 @@ sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
 x = embed(sol[1,1000:1500], 3, 6);
 
 # length of time series for RQA calculation test
-N = round.(Int, 10 .^ (log10(200.):.075:log10(1000000.)));
+N = round.(Int, 10 .^ (log10(200.):.075:log10(2000000.)));
 
 
 # calculate  RQA for different length

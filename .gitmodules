@@ -1,0 +1,6 @@
+[submodule "Libs/RQA_OpenMP"]
+	path = Libs/RQA_OpenMP
+	url = git@github.com:pucicu/RQA_OpenMP.git
+[submodule "Libs/RQA_HPC"]
+	path = Libs/RQA_HPC
+	url = https://code.it4i.cz/ADAS/RQA_HPC.git
