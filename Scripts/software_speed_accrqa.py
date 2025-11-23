@@ -1,7 +1,6 @@
 # speed test
 
 # import required packages
-from scipy.integrate import odeint
 import numpy as np
 import time
 import accrqa as rqa
@@ -25,56 +24,67 @@ args = parser.parse_args()
 # set computation type
 compFlag = args.compFlag
 
+# results files
+timeResultsfile = f'../Results/time_python_accrqa_{compFlag}.csv'
+rqaResultsfile = f'../Results/rqa_python_accrqa_{compFlag}.csv'
 
-# results file
-filename = f'../Results/time_python_accrqa_{compFlag}.csv'
+# data file
+datafile = '../Libs/roessler.csv'
 
-
-# the Roessler ODE
-def roessler(x,t):
-   return [-(x[1] + x[2]), x[0] + 0.25 * x[1], 0.25 + (x[0] - 4) * x[2]]
+# import data
+x = np.loadtxt(datafile)
 
 # length of time series for RQA calculation test
 N = np.round(10**np.arange(np.log10(200.),np.log10(1000000.),.075)). astype(int)
 
-
 # calculate RP and RQA for different length
-tspanRP = np.zeros(len(N)); # result vector computation time
-tspanRQA = np.zeros(len(N)); # result vector computation time
-K = 10; # number of runs (for averaging time)
-maxT = 600; # stop calculations if maxT is exceeded
-dt = 0.05; # sampling time
+tspanRP = np.zeros(len(N));     # result vector computation time
+tspanRQA = np.zeros(len(N));    # result vector computation time
+mRQA = np.zeros((len(N), 6));   # result vector RQA average
+vRQA = np.zeros((len(N), 6));   # result vector RQA variance
+K = 10;                         # number of runs (for averaging time)
+maxT = 600;                     # stop calculations if maxT is exceeded
+dt = 0.05;                      # sampling time
+m = 3;                          # embedding dimension
+tau = 6;                        # embedding delay
+e = 1.2;                        # recurrence threshold
+lmin = 2;                       # minimal line length
 
-
-with open(filename, "w") as f:
+with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
    for i in range(0,len(tspanRP)):
        tRP_ = 0
        tRQA_ = 0
-       # initialize calculation (avoids artifical large compute times for first run)
-       x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
-       output_RR = rqa.RR(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
-       output_DET = rqa.DET(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
-       output_LAM = rqa.LAM(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+       RQA_ = np.zeros((K, 6))
+
+       rp = rqa.RP(x[0:N[i]], tau, m, e, distance_type=rqa.accrqaDistance("euclidean"));
+       det = rqa.DET(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag));
+       lam = rqa.LAM(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = False, comp_platform = rqa.accrqaCompPlatform(compFlag));
 
        for j in range(0,K):
 
-           # solve the ODE
-           x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
-
            start_time = time.time()
-
-           output_RR = rqa.RR(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
-           output_DET = rqa.DET(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
-           output_LAM = rqa.LAM(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
-
-           #tRP_ += (time.time() - start_time)
+           rp = rqa.RP(x[0:N[i]], tau, m, e, distance_type=rqa.accrqaDistance("euclidean"));
+           tRP_ += (time.time() - start_time)
+           
+           start_time = time.time()
+           det = rqa.DET(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag));
+           lam = rqa.LAM(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = False, comp_platform = rqa.accrqaCompPlatform(compFlag));
            tRQA_ += (time.time() - start_time)
-       tspanRP[i] = tRP_ / K # average calculation time
-       tspanRQA[i] = tRQA_ / K # average calculation time
+
+           RQA_[j,:] = [det.RR.item(), det.DET.item(), det.L.item(), det.ENTR.item(), lam.LAM.item(), lam.TT.item()]
+           time.sleep(.1)                # wait until process has finished
+           
+       tspanRP[i] = tRP_ / K             # average calculation time
+       tspanRQA[i] = tRQA_ / K           # average calculation time
+       mRQA[i,:] = np.mean(RQA_, axis=0) # average RQA
+       vRQA[i,:] = np.var(RQA_, axis=0)  # average RQA
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
 
        # save results
-       f.write(f"{N[i]}, {tspanRQA[i]}\n")
+       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
+       f_time.flush()
+       f_rqa.write(f"{N[i]}, {', '.join(str(v) for v in mRQA[i,:])}, {', '.join(str(v) for v in vRQA[i,:])}\n")
+       f_rqa.flush()
 
        if tspanRP[i] + tspanRQA[i] >= maxT:
           break

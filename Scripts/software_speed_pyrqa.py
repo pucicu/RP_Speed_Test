@@ -1,6 +1,5 @@
 # speed test
 # import required packages
-from scipy.integrate import odeint
 import numpy as np
 import time
 from pyrqa.time_series import TimeSeries
@@ -9,71 +8,107 @@ from pyrqa.analysis_type import Classic
 from pyrqa.neighbourhood import FixedRadius
 from pyrqa.metric import EuclideanMetric
 from pyrqa.computation import RQAComputation
+from pyrqa.computation import RPComputation
 
-# results file
-filename = '../Results/time_python_pyrqa.csv'
+# results files
+timeResultsfile = '../Results/time_python_pyrqa.csv'
+rqaResultsfile = '../Results/rqa_python_pyrqa.csv'
 
-# the Roessler ODE
-def roessler(x,t):
-   return [-(x[1] + x[2]), x[0] + 0.25 * x[1], 0.25 + (x[0] - 4) * x[2]]
+# data file
+datafile = '../Libs/roessler.csv'
+
+# import data
+x = np.loadtxt(datafile)
 
 # length of time series for RQA calculation test
-N = np.round(10**np.arange(np.log10(200.),np.log10(1000000.),.075)). astype(int)
-
+N = np.round(10**np.arange(np.log10(200.),np.log10(10000.),.075)). astype(int)
 
 # calculate RP and RQA for different length
-tspan = np.zeros(len(N)); # result vector computation time
-K = 10; # number of runs (for averaging time)
-maxT = 600; # stop calculations if maxT is exceeded
-dt = 0.05; # sampling time
+tspanRP = np.zeros(len(N));     # result vector computation time
+tspanRQA = np.zeros(len(N));    # result vector computation time
+mRQA = np.zeros((len(N), 6));   # result vector RQA average
+vRQA = np.zeros((len(N), 6));   # result vector RQA variance
+K = 10;                         # number of runs (for averaging time)
+maxT = 600;                     # stop calculations if maxT is exceeded
+dt = 0.05;                      # sampling time
+m = 3;                          # embedding dimension
+tau = 6;                        # embedding delay
+e = 1.2;                        # recurrence threshold
+lmin = 2;                       # minimal line length
+
 
 
 # dry run to setup environment
-x = odeint(roessler, np.random.rand(3), np.arange(0, dt*5000, .05))
-
-xe = TimeSeries(x[:,0], embedding_dimension=3, time_delay=6)
+xe = TimeSeries(x[1:10000], embedding_dimension=m, time_delay=tau)
 settings = Settings(xe,
            analysis_type=Classic,
-           neighbourhood=FixedRadius(1.2),
+           neighbourhood=FixedRadius(e),
            similarity_measure=EuclideanMetric,
            theiler_corrector=1)
-computation = RQAComputation.create(settings, verbose=True)
-R = computation.run()
+rqaComputation = RQAComputation.create(settings, verbose=True)
+R = rqaComputation.run()
+
+rpComputation = RPComputation.create(settings, verbose=True)
+R = rpComputation.run()
 
 # computation loop testing different time series lenghts
-with open(filename, "w") as f:
-   for i in range(0,len(tspan)):
+with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
+   for i in range(0,len(tspanRP)):
 
-       # solve the ODE
-       x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
+       tRP_ = 0
+       tRQA_ = 0
+       RQA_ = np.zeros((K, 6))
 
-       xe = TimeSeries(x[1000:(1000+N[i]),0],
-                       embedding_dimension=3,
-                       time_delay=6)
+       xe = TimeSeries(x[9:N[i]],
+                       embedding_dimension=m,
+                       time_delay=tau)
        settings = Settings(xe,
                        analysis_type=Classic,
-                       neighbourhood=FixedRadius(1.2),
+                       neighbourhood=FixedRadius(e),
                        similarity_measure=EuclideanMetric,
                        theiler_corrector=1)
-       computation = RQAComputation.create(settings,
-                       verbose=True)
-       t_ = 0
        for j in range(0, K):
 
            try:
                start_time = time.time()
-               R = computation.run()
-               t_ += (time.time() - start_time)
+               rpComputation = RPComputation.create(settings, verbose=False)
+               rpR = rpComputation.run()
+               tRP_ += (time.time() - start_time)
+               
+               start_time = time.time()
+               rqaComputation = RQAComputation.create(settings, verbose=False)
+               R = rqaComputation.run()
+               R.min_diagonal_line_length = lmin
+               R.min_vertical_line_length = lmin
+
+               rr = R.recurrence_rate
+               det = R.determinism
+               l = R.average_diagonal_line
+               entr = R.entropy_diagonal_lines
+               lam = R.laminarity
+               tt = R.trapping_time
+               
+               tRQA_ += (time.time() - start_time)
+               RQA_[j,:] = [rr, det, l, entr, lam, tt]
            except:
+               print(f'Error in run {i}')
                R = 0
-               t_ = np.nan
+               tRP_ = np.nan
+               tRQA_ = np.nan
+               RQA_[j,:] = [np.nan,np.nan,np.nan,np.nan,np.nan,np.nan]
                break
 
-       tspan[i] = t_ / K # average calculation time
-       print(N[i], ": ", tspan[i])
+       tspanRP[i] = tRP_ / K             # average calculation time
+       tspanRQA[i] = tRQA_ / K           # average calculation time
+       mRQA[i,:] = np.mean(RQA_, axis=0) # average RQA
+       vRQA[i,:] = np.var(RQA_, axis=0)  # average RQA
+       print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
 
        # save results
-       f.write(f"{N[i]}, {tspan[i]}\n")
+       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
+       f_time.flush()
+       f_rqa.write(f"{N[i]}, {', '.join(str(v) for v in mRQA[i,:])}, {', '.join(str(v) for v in vRQA[i,:])}\n")
+       f_rqa.flush()
 
-       if tspan[i] >= maxT:
+       if tspanRP[i] + tspanRQA[i] >= maxT:
           break
