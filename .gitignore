@@ -9,3 +9,4 @@ rp/
 .venv
 __pycache__
 .nfs*
+Libs/roessler.csv
