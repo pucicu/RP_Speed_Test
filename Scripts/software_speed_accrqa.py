@@ -4,6 +4,7 @@
 from scipy.integrate import odeint
 import numpy as np
 import time
+import gc
 import accrqa as rqa
 import argparse
 
@@ -55,6 +56,7 @@ with open(filename, "w") as f:
        output_RR = rqa.RR(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
        output_DET = rqa.DET(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
        output_LAM = rqa.LAM(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+       gc.disable()
 
        for j in range(0,K):
 
@@ -69,12 +71,15 @@ with open(filename, "w") as f:
 
            #tRP_ += (time.time() - start_time)
            tRQA_ += (time.time() - start_time)
+           
        tspanRP[i] = tRP_ / K # average calculation time
        tspanRQA[i] = tRQA_ / K # average calculation time
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
+       gc.enable()
 
        # save results
        f.write(f"{N[i]}, {tspanRQA[i]}\n")
+       f.flush()
 
        if tspanRP[i] + tspanRQA[i] >= maxT:
           break

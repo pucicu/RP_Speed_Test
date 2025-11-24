@@ -3,6 +3,7 @@
 from scipy.integrate import odeint
 import numpy as np
 import time
+import gc
 from pyrqa.time_series import TimeSeries
 from pyrqa.settings import Settings
 from pyrqa.analysis_type import Classic
@@ -55,12 +56,12 @@ with open(filename, "w") as f:
                        neighbourhood=FixedRadius(1.2),
                        similarity_measure=EuclideanMetric,
                        theiler_corrector=1)
-       computation = RQAComputation.create(settings,
-                       verbose=True)
        t_ = 0
+       gc.disable()
        for j in range(0, K):
 
            try:
+               computation = RQAComputation.create(settings, verbose=False)
                start_time = time.time()
                R = computation.run()
                t_ += (time.time() - start_time)
@@ -68,12 +69,14 @@ with open(filename, "w") as f:
                R = 0
                t_ = np.nan
                break
-
+           
        tspan[i] = t_ / K # average calculation time
        print(N[i], ": ", tspan[i])
+       gc.enable()
 
        # save results
        f.write(f"{N[i]}, {tspan[i]}\n")
+       f.flush()
 
        if tspan[i] >= maxT:
           break
