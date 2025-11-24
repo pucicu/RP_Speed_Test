@@ -1,78 +1,81 @@
 # speed test
 
 # import required packages
-using OrdinaryDiffEq
 using DelayEmbeddings
 using DelimitedFiles
 using RecurrenceMicrostatesAnalysis
 
 # results file
-filename = "../Results/time_julia_microstates.csv"
+timeResultsfile = "../Results/time_julia_microstates.csv"
+rqaResultsfile = "../Results/rqa_julia_microstates.csv"
+
+# data file
+datafile = "../Libs/roessler.csv"
+
+# import data
+x = readdlm(datafile)
 
 # define RQA using microstates approach
 function rqa(x,e,m)
     dist = distribution(x', e, m);
-    RR = rrate(dist)           # Recurrence rate
+    RR = rrate(dist)            # Recurrence rate
     DET = determinism(RR, dist) # Determinism
+    LAM = laminarity(RR, dist)  # Laminarity
+    return RR, DET, LAM
 end
 
-# the Roessler ODE
-function roessler!(dx, x, p, t)
-    dx[1] = -(x[2] + x[3]);
-    dx[2] = x[1] + 0.25 * x[2];
-    dx[3] = 0.25 + (x[1] - 4) * x[3];
-end
-
-# solve the ODE        
-dt = 0.05; # sampling time
-prob = ODEProblem(roessler!, rand(3), (0.,20500.));
-sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
-x = embed(sol[1,1000:1500], 3, 6);
 
 # length of time series for RQA calculation test
 N = round.(Int, 10 .^ (log10(200.):.075:log10(500000.)));
 
 
 # calculate  RQA for different length
-tspanRP = zeros(length(N),1); # result vector computation time
-tspanRQA = zeros(length(N),1); # result vector computation time
-K = 10; # number of runs (for averaging time)
-maxT = 600; # stop calculations if maxT is exceeded
-m = 3 # motif size
+tspanRP = fill(NaN, length(N), 1)  # result vector computation time
+tspanRQA = fill(NaN, length(N), 1) # result vector computation time
+mRQA = zeros(length(N), 6);        # result vector RQA average
+vRQA = zeros(length(N), 6);        # result vector RQA variance
+K = 10;                            # number of runs (for averaging time)
+maxT = 600;                        # stop calculations if maxT is exceeded
+m = 3                              # motif size
+e = 1.2;                           # recurrence threshold
+lmin = 2;                          # minimal line length
 
 
 # dry run to pre-compile
-x = reduce(hcat,x)'
-Q = rqa(x, 1.2, m);
+Q = rqa(x[1:1000], e, m);
 
-open(filename, "w") do io
-   for (i,N_) in enumerate(N)
+open(timeResultsfile, "w") do f_time
+   open(rqaResultsfile, "w") do f_rqa
+       for (i,N_) in enumerate(N)
 
-      tRQA_ = 0;
-      for j in 1:K
-          local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
-          local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
-          local x = embed(sol[1,1000:1000+N_], 3, 6);
-          x = reduce(hcat,x)'
-          try
-              t = @timed local Q = rqa(x, 1.2, m);
-              tRQA_ = tRQA_ + t.time;
-          catch
-              tRQA_ = NaN
-              println("ERROR: Skip")
+          tRQA_ = 0;
+          RQA_ = zeros(K, 6)
+          for j in 1:K
+              try
+                  t = @timed local Q = rqa(x[1:N_], e, m);
+                  tRQA_ = tRQA_ + t.time;
+                  RQA_[j,:] = [Q[1], Q[2], NaN, NaN, Q[3], NaN]
+              catch
+                  tRQA_ = NaN
+                  RQA_[j,:] = [NaN,NaN,NaN,NaN,NaN,NaN]
+                  println("ERROR: Skip")
+              end
           end
+          tspanRQA[i] = tRQA_ / K; # average calculation time
+          mRQA[i, :] = mean(RQA_, dims = 1) # average RQA
+          vRQA[i, :] = var(RQA_, dims = 1)  # variance RQA
+          print(N_, ": ", tspanRQA[i],"\n")
           flush(stdout)
-      end
-      tspanRQA[i] = tRQA_ / K; # average calculation time
-      print(N_, ": ", tspanRQA[i],"\n")
-      flush(stdout)
 
-      # save results
-      write(io, "$N_, $(tspanRQA[i])\n")
-      flush(io)
+          # save results
+          write(f_time, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
+          flush(f_time)
+          write(f_rqa, string(N[i], ", ", join(mRQA[i, :], ", "), ", ", join(vRQA[i, :], ", "), "\n"))
+          flush(f_rqa)
 
-      if tspanRQA[i] >= maxT
-        break
-      end
+          if tspanRQA[i] >= maxT
+            break
+          end
+       end
    end
 end

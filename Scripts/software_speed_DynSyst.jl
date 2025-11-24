@@ -1,7 +1,6 @@
 # speed test
 
 # import required packages
-using OrdinaryDiffEq
 using DelayEmbeddings
 using DynamicalSystems
 using DelimitedFiles
@@ -21,76 +20,82 @@ end
 args = parse_args(s)
 parallel = lowercase(args["parallel"]) in ["true", "t", "1"]
 
-
-# results file
-filename = "../Results/time_julia_single.csv"
-if parallel
-    filename = "../Results/time_julia_parallel.csv"
-end
-
-
-
 println("Active threads: ", Threads.nthreads())
 
-# the Roessler ODE
-function roessler!(dx, x, p, t)
-    dx[1] = -(x[2] + x[3]);
-    dx[2] = x[1] + 0.25 * x[2];
-    dx[3] = 0.25 + (x[1] - 4) * x[3];
+# results file
+timeResultsfile = "../Results/time_julia_single.csv"
+rqaResultsfile = "../Results/rqa_julia_single.csv"
+if parallel
+    timeResultsfile = "../Results/time_julia_parallel.csv"
+    rqaResultsfile = "../Results/rqa_julia_parallel.csv"
 end
 
-# solve the ODE        
-dt = 0.05; # sampling time
-prob = ODEProblem(roessler!, rand(3), (0.,10500.));
-sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
+# data file
+datafile = "../Libs/roessler.csv"
+
+# import data
+x = readdlm(datafile)
 
 # length of time series for RQA calculation test
 N = round.(Int, 10 .^ (log10(200.):.075:log10(500000.)));
 
 
 # calculate RP and RQA for different length
-tspanRP = zeros(length(N),1); # result vector computation time
-tspanRQA = zeros(length(N),1); # result vector computation time
-K = 10; # number of runs (for averaging time)
-maxT = 600; # stop calculations if maxT is exceeded
+tspanRP = fill(NaN, length(N), 1)  # result vector computation time
+tspanRQA = fill(NaN, length(N), 1) # result vector computation time
+mRQA = zeros(length(N), 6);        # result vector RQA average
+vRQA = zeros(length(N), 6);        # result vector RQA variance
+K = 10;                            # number of runs (for averaging time)
+maxT = 600;                        # stop calculations if maxT is exceeded
+m = 3;                             # embedding dimension
+tau = 6;                           # embedding delay
+e = 1.2;                           # recurrence threshold
+lmin = 2;                          # minimal line length
 
 # dry run to pre-compile
-x = embed(sol[1,1000:1500], 3, 6);
-R = RecurrenceMatrix(x, 1.2, parallel=parallel);
-Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel);
+xe = embed(x[1:1500], m, tau);
+R = RecurrenceMatrix(xe, e, parallel=parallel);
+Q = rqa(R, theiler = 1, onlydiagonal=false, parallel=parallel);
 
-open(filename, "w") do io
-   for (i,N_) in enumerate(N)
+open(timeResultsfile, "w") do f_time
+   open(rqaResultsfile, "w") do f_rqa
+       for (i,N_) in enumerate(N)
 
-      tRP_ = 0;
-      tRQA_ = 0;
-      for j in 1:K
-          local prob = ODEProblem(roessler!, rand(3), (0., dt*(1000+N_)));
-          local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
-          local x = embed(sol[1,1000:1000+N_], 3, 6);
+          tRP_ = 0;
+          tRQA_ = 0;
+          RQA_ = zeros(K, 6)
+          for j in 1:K
+              try
+                 xe = embed(x[1:N_], m, tau);
+                 t1 = @timed local R = RecurrenceMatrix(xe, 1.2, parallel=parallel)
+                 t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=false, parallel=parallel)
+                 tRP_ = tRP_ + t1.time;
+                 tRQA_ = tRQA_ + t2.time;
+                 RQA_[j,:] = [Q[:RR], Q[:DET], Q[:L], Q[:ENTR], Q[:LAM], Q[:TT]]
 
-          try
-             t1 = @timed local R = RecurrenceMatrix(x, 1.2, parallel=parallel)
-             t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel)
-             tRP_ = tRP_ + t1.time;
-             tRQA_ = tRQA_ + t2.time;
-          catch
-             tRP_ = NaN
-             tRQA_ = NaN
+              catch
+                 tRP_ = NaN
+                 tRQA_ = NaN
+                 RQA_[j,:] = [NaN,NaN,NaN,NaN,NaN,NaN]
+              end
           end
+          tspanRP[i] = tRP_ / K;            # average calculation time
+          tspanRQA[i] = tRQA_ / K;          # average calculation time
+          mRQA[i, :] = mean(RQA_, dims = 1) # average RQA
+          vRQA[i, :] = var(RQA_, dims = 1)  # variance RQA
+
+          print(N_, ": ", tspanRP[i], " - ", tspanRQA[i],"\n")
           flush(stdout)
-      end
-      tspanRP[i] = tRP_ / K; # average calculation time
-      tspanRQA[i] = tRQA_ / K; # average calculation time
-      print(N_, ": ", tspanRP[i], " - ", tspanRQA[i],"\n")
-      flush(stdout)
 
-      # save results
-      write(io, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
-      flush(io)
+          # save results
+          write(f_time, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
+          flush(f_time)
+          write(f_rqa, string(N[i], ", ", join(mRQA[i, :], ", "), ", ", join(vRQA[i, :], ", "), "\n"))
+          flush(f_rqa)
 
-      if tspanRP[i] + tspanRQA[i] >= maxT
-        break
-      end
+          if tspanRP[i] + tspanRQA[i] >= maxT
+            break
+          end
+       end
    end
 end

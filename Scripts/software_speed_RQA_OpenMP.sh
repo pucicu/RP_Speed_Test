@@ -4,18 +4,42 @@
 # ----------------------------------------
 # CONFIG
 # ----------------------------------------
-DATAFILE="../Libs/RQA_OpenMP/lorenz.dat"
-TMPFILE="tmp_data.dat"
-RESULTSFILE="../Results/time_RQA_OpenMP.csv"
+DATAFILE="../Libs/roessler.csv"
+TMPFILE="tmp_data_openmp.dat"
+TMPRESULTSFILE="tmp_results_openmp.dat"
+TIMERESULTSFILE="../Results/time_RQA_OpenMP.csv"
+RQARESULTSFILE="../Results/rqa_RQA_OpenMP.csv"
 EXEC="../Libs/RQA_OpenMP/rqa_omp"
-ARGS=(-i $TMPFILE -e 1.04 -s)
+DIM=3
+TAU=6
+E=1.2
+ARGS=(-i $TMPFILE -e $E -m $DIM -t $TAU -s -o $TMPRESULTSFILE)
 
 REPEATS=10
+
+# Functions for mean and varianz
+mean() {
+    local arr=("$@")
+    local sum=0
+    for v in "${arr[@]}"; do sum=$(echo "$sum + $v" | bc -l); done
+    echo "$(echo "$sum / ${#arr[@]}" | bc -l)"
+}
+
+variance() {
+    local arr=("$@")
+    local m=$(mean "${arr[@]}")
+    local sumsq=0
+    for v in "${arr[@]}"; do
+        sumsq=$(echo "$sumsq + ($v - $m)^2" | bc -l)
+    done
+    echo "$(echo "$sumsq / ${#arr[@]}" | bc -l)"
+}
 
 # ----------------------------------------
 # Create RESULTSFILE file
 # ----------------------------------------
-echo > "$RESULTSFILE"
+echo > "$TIMERESULTSFILE"
+echo > "$RQARESULTSFILE"
 
 # ----------------------------------------
 # Generate the list of N values using awk
@@ -60,6 +84,15 @@ for N in $(generate_N_list); do
 
         # Sum up times
         sum=$(echo "$sum + $t" | bc -l)
+        # sum RQA values
+        vals=($(awk '{print $1, $2, $4, $5, $6, $7}' "$TMPRESULTSFILE"))
+
+        RR+=("${vals[0]}")
+        DET+=("${vals[1]}")
+        L+=("${vals[2]}")
+        DE+=("${vals[3]}")
+        LAM+=("${vals[4]}")
+        TT+=("${vals[5]}")        
     done
 
     # Compute mean
@@ -68,8 +101,20 @@ for N in $(generate_N_list); do
     echo "  mean runtime = $mean sec"
 
     # Append to CSV
-    echo "$N,$mean" >> "$RESULTSFILE"
+    echo "$N,$mean" >> "$TIMERESULTSFILE"
+
+    # RQA mean and variance
+    out=()
+    for arr in RR DET L DE LAM TT; do
+        eval "values=(\"\${$arr[@]}\")"
+        m=$(mean "${values[@]}")
+        v=$(variance "${values[@]}")
+        out+=("$m,$v")
+    done
+
+    # Append to CSV
+    echo "$N ${out[*]}" | tr ' ' ',' >> "$RQARESULTSFILE"
 done
-rm $TMPFILE
+rm $TMPFILE $TMPRESULTSFILE
 
 echo "Done. Results written to $RESULTSFILE"

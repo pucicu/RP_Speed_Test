@@ -1,59 +1,91 @@
 # speed test
 
 # import required packages
-#install.packages(c("nonlinearTseries", "crqa", "abind", "tictoc"), repos="https://cloud.r-project.org/")
+#install.packages(c("crqa", "tictoc"), repos="https://cloud.r-project.org/")
 
-require(stats)
 library(tictoc)
-library(nonlinearTseries)
 library(crqa)
-library(abind)
 
-# results file
-filename = '../Results/time_R.csv'
+# results files
+timeResultsfile = '../Results/time_R.csv'
+rqaResultsfile = '../Results/rqa_R.csv'
+
+# data file
+datafile = '../Libs/roessler.csv'
+
+# import data
+x = as.matrix(read.table(datafile))
 
 # length of time series for RQA calculation test
 N = round(10.^seq(log10(200),log10(100000), 0.075))
 
 # calculate RP and RQA for different length
-tspan = numeric(length(N)) # result vector computation time
-K = 10 # number of runs (for averaging time)
-maxT = 600 # stop calculations if maxT is exceeded
-dt = 0.05 # sampling time
+tspan = numeric(length(N))  # result vector computation time
+mRQA = matrix(0, nrow = length(N), ncol = 6) # result vector RQA average
+vRQA = matrix(0, nrow = length(N), ncol = 6) # result vector RQA variance
+K = 10                      # number of runs (for averaging time)
+maxT = 600                  # stop calculations if maxT is exceeded
+m = 3;                      # embedding dimension
+tau = 6;                    # embedding delay
+e = 1.2;                    # recurrence threshold
+lmin = 2;                   # minimal line length
 
-fc = file(filename, open="w")
+f_time = file(timeResultsfile, open="w")
+f_rqa = file(rqaResultsfile, open="w")
 for (i in 1:length(N)) {
    t_ = 0
+   RQA_ = matrix(0, nrow = K, ncol = 6)
+
    for (j in 1:K) {
 
-       # solve the Roessler ODE        
-       r = rossler(start = runif(3, min = 0, max = 1), time=seq(0, dt*(1000+N[i]), by = dt));
-       x = r$x
+        start_time = proc.time()[3]
 
-       start_time <- Sys.time()
-       R = try(
+        R = try(
           crqa(
-            x[1000:(1000+N[i]-1)], 
-            x[1000:(1000+N[i]-1)], 
-            3, 6, 0, 1.2, 0, 2, 2, 0, 
-            FALSE, FALSE, 'both', 'rqa', 'euclidean', 'continuous'
-          ), 
+            x[1:N[i]],
+            x[1:N[i]],
+            tau, m, 0, e, 0, lmin, lmin, 1,
+            FALSE, FALSE, "both", "rqa", "euclidean", "continuous"
+          ),
           silent = TRUE
         )
 
         if (inherits(R, "try-error")) {
-            cat("Error in crqa at i =", i, "j =", j, "- skip calculation\n")
-            t_ = NaN
+
+          cat("Error in crqa at i =", i, "j =", j, "- skip calculation\n")
+          t_ = NaN
+
+        } else {
+
+          rr  = R[[1]]
+          det = R[[2]]
+          l   = R[[5]]
+          ent = R[[6]]
+          lam = R[[8]]
+          tt  = R[[9]]
+
+          end_time = proc.time()[3]
+          duration = end_time - start_time
+
+          t_ = t_ + duration
+          RQA_[j, ] = c(rr, det, l, ent, lam, tt)
         }
- 
-        t_ = t_ + as.numeric(Sys.time() - start_time)
+
        #cat("  ", j, "\n")
     }
     tspan[i] = t_ / K # average calculation time
+    mRQA[i, ] = colMeans(RQA_)
+    vRQA[i, ] = apply(RQA_, 2, var)
     cat(N[i], ": ", tspan[i], "\n")
         
     # save results
-    writeLines(sprintf("%d, %f", N[i], tspan[i]), fc)
+    writeLines(sprintf("%d, %f", N[i], tspan[i]), f_time)
+    line <- paste(
+      paste(mRQA[i, ], collapse = ", "),
+      paste(vRQA[i, ], collapse = ", "),
+      sep = ", "
+    )
+    writeLines(line, f_rqa)
 
     if (tspan[i] >= maxT) {
        break

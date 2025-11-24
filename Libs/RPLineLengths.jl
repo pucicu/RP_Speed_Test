@@ -259,8 +259,10 @@ function get_hist_diagonal_sampled(x::AbstractMatrix{T}, e::T, M::Int) where {T<
     L_local = zeros(Int, N)           # Histogram for line lengths
     e2 = e^2                          # Squared threshold (avoids sqrt)
     count = 0                         # Number of valid lines found
+    countAll = 0                      # Number of searches
 
     while count < M
+        countAll += 1                 # Count number of searches
         i_start = rand(2:N)           # Random starting index for i
         j_start = rand(1:i_start-1)   # Random starting index for j
 
@@ -308,5 +310,5 @@ function get_hist_diagonal_sampled(x::AbstractMatrix{T}, e::T, M::Int) where {T<
         end
     end
 
-    return L_local
+    return L_local, countAll
 end

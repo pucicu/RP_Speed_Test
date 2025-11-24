@@ -30,7 +30,6 @@ mRQA = np.zeros((len(N), 6));   # result vector RQA average
 vRQA = np.zeros((len(N), 6));   # result vector RQA variance
 K = 10;                         # number of runs (for averaging time)
 maxT = 600;                     # stop calculations if maxT is exceeded
-dt = 0.05;                      # sampling time
 m = 3;                          # embedding dimension
 tau = 6;                        # embedding delay
 e = 1.2;                        # recurrence threshold
@@ -101,7 +100,7 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
        mRQA[i,:] = np.mean(RQA_, axis=0) # average RQA
-       vRQA[i,:] = np.var(RQA_, axis=0)  # average RQA
+       vRQA[i,:] = np.var(RQA_, axis=0)  # variance RQA
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
 
        # save results
