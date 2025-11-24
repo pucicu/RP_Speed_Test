@@ -30,6 +30,8 @@ Python   | simple RP and RQA implementation (required file `rp.py` included)
 Python   | _pyunicorn_ v0.8.2 <https://pypi.org/project/pyunicorn/>
 Python   | _PyRQA_ v8.1.0 <https://pypi.org/project/PyRQA/>
 Python   | _AccRQA_ v0.9.1 <https://pypi.org/project/accrqa/>
+RQA_HPC  | <https://code.it4i.cz/ADAS/RQA_HPC.git>
+RQA_OpenMP| <https://github.com/pucicu/RQA_OpenMP> (<https://doi.org/10.5281/zenodo.17666224>)
 
 The _CRP Toolbox_ for MATLAB is not used,
 because the implementation is interwoven with a graphical user interface and, thus,

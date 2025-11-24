@@ -1,7 +1,3 @@
-_time_matlab_crp.csv
-_time_python_bmfreis.csv
-rp_rqa_speed-test.eps
-software_speed.eps
 software_speed_CRP.m
 software_speed_bmfreis.py
 *.err
