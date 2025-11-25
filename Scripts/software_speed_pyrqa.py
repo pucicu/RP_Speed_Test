@@ -76,8 +76,8 @@ with open(filename, "w") as f:
                start_time = time.time()
                rqaComputation = RQAComputation.create(settings, verbose=False)
                R = rqaComputation.run()
-               R.min_diagonal_line_length = lmin
-               R.min_vertical_line_length = lmin
+               R.min_diagonal_line_length = 2
+               R.min_vertical_line_length = 2
 
                rr = R.recurrence_rate
                det = R.determinism
@@ -94,7 +94,7 @@ with open(filename, "w") as f:
            
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
-       print(N[i], ": ", tspanRQA[i])
+       print(N[i], ": ", tspanRP[i], ": ", tspanRQA[i])
        gc.enable()
 
        # save results

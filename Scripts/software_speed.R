@@ -21,7 +21,7 @@ K = 10 # number of runs (for averaging time)
 maxT = 600 # stop calculations if maxT is exceeded
 dt = 0.05 # sampling time
 
-fc = file(filename, open="w")
+f = file(filename, open="w")
 for (i in 1:length(N)) {
    t_ = 0
    for (j in 1:K) {
@@ -53,9 +53,11 @@ for (i in 1:length(N)) {
     cat(N[i], ": ", tspan[i], "\n")
         
     # save results
-    writeLines(sprintf("%d, %f", N[i], NaN, NaN, tspan[i]), fc)
+    writeLines(sprintf("%d, %f, %f, %f", N[i], NaN, NaN, tspan[i]), f)
+    flush(f)
 
-    if (tspan[i] >= maxT) {
+    if (is.nan(tspan[i]) || tspan[i] >= maxT) {
        break
     }
 }    
+close(f)

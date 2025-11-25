@@ -68,7 +68,7 @@ for N in $(generate_N_list); do
     echo "  mean runtime = $mean sec"
 
     # Append to CSV
-    echo "$N,$mean" >> "$RESULTSFILE"
+    echo "$N,NaN,$mean,NaN" >> "$RESULTSFILE"
 done
 rm $TMPFILE
 
