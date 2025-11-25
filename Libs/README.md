@@ -17,8 +17,7 @@ pip install PyRQA
 Change to the AccRQA folder and call
 
 ```
-module purge
-module load python aocc gcc/13.2.0 cuda openssl/3.0.12 cmake
+module load python gcc/13.2.0 mpfr cuda cmake libffi/3.4.4 openssl/3.0.12
 source ../../.venv/bin/activate
 pip install .
 ```
