@@ -53,7 +53,7 @@ for (i in 1:length(N)) {
     cat(N[i], ": ", tspan[i], "\n")
         
     # save results
-    writeLines(sprintf("%d, %f", N[i], tspan[i]), fc)
+    writeLines(sprintf("%d, %f", N[i], NaN, NaN, tspan[i]), fc)
 
     if (tspan[i] >= maxT) {
        break

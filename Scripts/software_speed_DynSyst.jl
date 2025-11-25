@@ -86,7 +86,7 @@ open(filename, "w") do io
       flush(stdout)
 
       # save results
-      write(io, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
+      write(io, "$N_, $(tspanRP[i]), $(tspanRQA[i]), $(tspanRP[i] + tspanRQA[i])\n")
       flush(io)
 
       if tspanRP[i] + tspanRQA[i] >= maxT

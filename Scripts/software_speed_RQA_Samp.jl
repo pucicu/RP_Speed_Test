@@ -70,7 +70,7 @@ open(filename, "w") do io
       flush(stdout)
 
       # save results
-      write(io, "$N_, $(tspanRQA[i])\n")
+      write(io, "$N_, NaN, $(tspanRQA[i]), NaN\n")
       flush(io)
 
       if tspanRQA[i] >= maxT

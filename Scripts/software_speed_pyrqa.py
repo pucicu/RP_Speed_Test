@@ -10,6 +10,7 @@ from pyrqa.analysis_type import Classic
 from pyrqa.neighbourhood import FixedRadius
 from pyrqa.metric import EuclideanMetric
 from pyrqa.computation import RQAComputation
+from pyrqa.computation import RPComputation
 
 # results file
 filename = '../Results/time_python_pyrqa.csv'
@@ -23,7 +24,8 @@ N = np.round(10**np.arange(np.log10(200.),np.log10(1000000.),.075)). astype(int)
 
 
 # calculate RP and RQA for different length
-tspan = np.zeros(len(N)); # result vector computation time
+tspanRP = np.zeros(len(N));     # result vector computation time
+tspanRQA = np.zeros(len(N));    # result vector computation time
 K = 10; # number of runs (for averaging time)
 maxT = 600; # stop calculations if maxT is exceeded
 dt = 0.05; # sampling time
@@ -38,8 +40,12 @@ settings = Settings(xe,
            neighbourhood=FixedRadius(1.2),
            similarity_measure=EuclideanMetric,
            theiler_corrector=1)
-computation = RQAComputation.create(settings, verbose=True)
-R = computation.run()
+
+rqaComputation = RQAComputation.create(settings, verbose=True)
+R = rqaComputation.run()
+
+rpComputation = RPComputation.create(settings, verbose=True)
+R = rpComputation.run()
 
 # computation loop testing different time series lenghts
 with open(filename, "w") as f:
@@ -56,27 +62,44 @@ with open(filename, "w") as f:
                        neighbourhood=FixedRadius(1.2),
                        similarity_measure=EuclideanMetric,
                        theiler_corrector=1)
-       t_ = 0
+       tRP_ = 0
+       tRQA_ = 0
        gc.disable()
        for j in range(0, K):
 
            try:
-               computation = RQAComputation.create(settings, verbose=False)
                start_time = time.time()
-               R = computation.run()
-               t_ += (time.time() - start_time)
+               rpComputation = RPComputation.create(settings, verbose=False)
+               rpR = rpComputation.run()
+               tRP_ += (time.time() - start_time)
+               
+               start_time = time.time()
+               rqaComputation = RQAComputation.create(settings, verbose=False)
+               R = rqaComputation.run()
+               R.min_diagonal_line_length = lmin
+               R.min_vertical_line_length = lmin
+
+               rr = R.recurrence_rate
+               det = R.determinism
+               l = R.average_diagonal_line
+               entr = R.entropy_diagonal_lines
+               lam = R.laminarity
+               tt = R.trapping_time
+               
+               tRQA_ += (time.time() - start_time)
            except:
                R = 0
                t_ = np.nan
                break
            
-       tspan[i] = t_ / K # average calculation time
+       tspanRP[i] = tRP_ / K             # average calculation time
+       tspanRQA[i] = tRQA_ / K           # average calculation time
        print(N[i], ": ", tspan[i])
        gc.enable()
 
        # save results
-       f.write(f"{N[i]}, {tspan[i]}\n")
+       f(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
        f.flush()
 
-       if tspan[i] >= maxT:
+       if (tspanRP[i] + tspanRQA[i]) >= maxT:
           break

@@ -82,7 +82,7 @@ with open(filename, "w") as f:
        gc.enable()
 
        # save results
-       f.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
+       f.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
        f.flush()
 
        if tspanRP[i] + tspanRQA[i] >= maxT:
