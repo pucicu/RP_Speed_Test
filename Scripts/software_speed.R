@@ -79,7 +79,7 @@ for (i in 1:length(N)) {
     cat(N[i], ": ", tspan[i], "\n")
         
     # save results
-    writeLines(sprintf("%d, %f", N[i], tspan[i]), f_time)
+    writeLines(sprintf("%d, %f", N[i], NaN, NaN, tspan[i]), f_time)
     line <- paste(
       paste(mRQA[i, ], collapse = ", "),
       paste(vRQA[i, ], collapse = ", "),

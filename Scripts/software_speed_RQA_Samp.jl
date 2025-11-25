@@ -78,7 +78,7 @@ open(timeResultsfile, "w") do f_time
           flush(stdout)
 
           # save results
-          write(f_time, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
+          write(f_time, "$N_, $(tspanRP[i]), $(tspanRQA[i]), $(tspanRP[i] + tspanRQA[i])\n")
           flush(f_time)
           write(f_rqa, string(N[i], ", ", join(mRQA[i, :], ", "), ", ", join(vRQA[i, :], ", "), "\n"))
           flush(f_rqa)

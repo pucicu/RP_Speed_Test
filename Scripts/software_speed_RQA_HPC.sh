@@ -115,7 +115,7 @@ for N in $(generate_N_list); do
     echo "  mean runtime = $mean sec"
 
     # Append to CSV
-    echo "$N,$mean" >> "$TIMERESULTSFILE"
+    echo "$N,NaN,NaN,$mean" >> "$TIMERESULTSFILE"
     
     # RQA mean and variance
     out=()
