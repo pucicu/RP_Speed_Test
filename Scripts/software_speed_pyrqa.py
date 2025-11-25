@@ -49,7 +49,7 @@ R = rpComputation.run()
 
 # computation loop testing different time series lenghts
 with open(filename, "w") as f:
-   for i in range(0,len(tspan)):
+   for i in range(0,len(tspanRP)):
 
        # solve the ODE
        x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))

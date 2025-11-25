@@ -4,7 +4,7 @@
 # ----------------------------------------
 # CONFIG
 # ----------------------------------------
-DATAFILE="../Libs/RQA_OpenMP/lorenz.dat"
+DATAFILE="../Libs/RQA_OpenMP/roessler.dat"
 TMPFILE="tmp_data.dat"
 RESULTSFILE="../Results/time_RQA_OpenMP.csv"
 EXEC="../Libs/RQA_OpenMP/rqa_omp"

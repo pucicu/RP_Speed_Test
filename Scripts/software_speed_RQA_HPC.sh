@@ -4,7 +4,7 @@
 # ----------------------------------------
 # CONFIG
 # ----------------------------------------
-DATAFILE="../Libs/RQA_OpenMP/lorenz.dat"
+DATAFILE="../Libs/RQA_OpenMP/roessler.dat"
 TMPFILE="tmp_data_hpc.dat"
 RESULTSFILE="../Results/time_RQA_HPC.csv"
 EXEC="../Libs/RQA_HPC/build/RQA_MPI"
