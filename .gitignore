@@ -10,3 +10,4 @@ rp/
 __pycache__
 .nfs*
 Libs/roessler.csv
+tmp_data*.dat

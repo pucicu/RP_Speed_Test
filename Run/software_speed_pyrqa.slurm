@@ -4,7 +4,7 @@
 #SBATCH --job-name=pyrqa_speedtest
 #SBATCH --output=../Logs/%x-%j.out
 #SBATCH --error=../Logs/%x-%j.err
-#SBATCH --time=06:00:00
+#SBATCH --time=24:00:00
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 

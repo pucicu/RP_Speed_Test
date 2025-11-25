@@ -49,7 +49,7 @@ R = rpComputation.run()
 
 # computation loop testing different time series lenghts
 with open(filename, "w") as f:
-   for i in range(0,len(tspan)):
+   for i in range(0,len(tspanRP)):
 
        # solve the ODE
        x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
@@ -94,11 +94,11 @@ with open(filename, "w") as f:
            
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
-       print(N[i], ": ", tspan[i])
+       print(N[i], ": ", tspanRQA[i])
        gc.enable()
 
        # save results
-       f(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
+       f.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
        f.flush()
 
        if (tspanRP[i] + tspanRQA[i]) >= maxT:
