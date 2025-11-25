@@ -6,17 +6,17 @@ SUBMIT_HPC=1
 if (( SUBMIT_HPC == 1 )); then
    # run different nodes of HPC
    
-#   sbatch software_speed_accrqa_cpu.slurm
-#   sbatch software_speed_accrqa_gpu.slurm
-#   sbatch software_speed_julia_microstates.slurm
-#   sbatch software_speed_julia_single.slurm
-#   sbatch software_speed_julia_parallel.slurm
-#   sbatch software_speed_julia_RQA_Samp.slurm
-#   sbatch software_speed_pyrqa.slurm
-#   sbatch software_speed_python.slurm
-#   sbatch software_speed_pyunicorn.slurm
-#   sbatch software_speed_R.slurm
-#   sbatch software_speed_RQA_OpenMP.slurm
+   sbatch software_speed_accrqa_cpu.slurm
+   sbatch software_speed_accrqa_gpu.slurm
+   sbatch software_speed_julia_microstates.slurm
+   sbatch software_speed_julia_single.slurm
+   sbatch software_speed_julia_parallel.slurm
+   sbatch software_speed_julia_RQA_Samp.slurm
+   sbatch software_speed_pyrqa.slurm
+   sbatch software_speed_python.slurm
+   sbatch software_speed_pyunicorn.slurm
+   sbatch software_speed_R.slurm
+   sbatch software_speed_RQA_OpenMP.slurm
    sbatch software_speed_RQA_HPC.slurm
 
 else
