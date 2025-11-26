@@ -1,9 +1,15 @@
 # speed test
 
 # import required packages
-Pkg.activate("../Libs/apRQA")
 using OrdinaryDiffEq
 using DelimitedFiles
+using Pkg
+Pkg.develop(path="../Libs/apRQA")
+using apRQA
+using OrdinaryDiffEq
+using DelimitedFiles
+using Pkg
+Pkg.develop(path="../Libs/apRQA")
 using apRQA
 
 
