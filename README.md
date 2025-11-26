@@ -24,7 +24,8 @@ Software | Package/ URL
 MATLAB   | simyple _rp.m_ v1.2 code <https://github.com/pucicu/rp>
 R        | _crqa_ v2.0.2 <https://github.com/morenococo/crqa>
 Julia    | _DynamicalSystems.jl_ v1.4.0 <https://juliadynamics.github.io/DynamicalSystems.jl/dev/>
-Julia    | _RecurrenceMicrostatesAnalysis.jl_ 0.2.24 <https://github.com/DynamicsUFPR/RecurrenceMicrostatesAnalysis.jl>
+Julia    | _RecurrenceMicrostatesAnalysis.jl_ v0.2.24 <https://github.com/DynamicsUFPR/RecurrenceMicrostatesAnalysis.jl>
+Julia    | _apRQA.jl_ v1 <https://github.com/pucicu/apRQA>
 Julia    | _RQA_Samp_ <https://doi.org/10.5281/zenodo.17620044> (required file `RPLineLengths.jl` included)
 Python   | simple RP and RQA implementation (required file `rp.py` included)
 Python   | _pyunicorn_ v0.8.2 <https://pypi.org/project/pyunicorn/>
@@ -45,7 +46,7 @@ Software | Requirements
 ---------|--------------
 MATLAB   | install the code from <https://github.com/pucicu/rp> as a subfolder `rp` in `Libs`
 R        | packages `nonlinearTseries`, `crqa`, `abind`, `tictoc`
-Julia    | packages `OrdinaryDiffEq`, `DelayEmbeddings`, `DynamicalSystems`, `DelimitedFiles`, `RecurrenceMicrostatesAnalysis`; and file `RPLineLengths.jl` placed in `Libs`
+Julia    | packages `OrdinaryDiffEq`, `DelayEmbeddings`, `DynamicalSystems`, `DelimitedFiles`, `RecurrenceMicrostatesAnalysis`, `apRQA`; and file `RPLineLengths.jl` placed in `Libs`
 Python   | packages `PyRQA`, `pyunicorn`, `accrqa`, `numpy`, `scipy`
 C/C++    | repos `AccRQA`, `RQA_HPC`, `RQA_OpenMP` should be cloned into `Libs` (build instructions in `Libs/README.md`)
 
@@ -63,8 +64,16 @@ The openMP based multithreaded implementations used 128 threads at the HPC "Foot
 
 ## Results
 
-The results presented here are from calculations performed on the "Foote" high performance cluster at PIK. A compute node consists of one AMD EPYC 9554 32-Core Processor with 128 CPUs, 3.75 GHz, and with 754GB RAM max per node. The GPU calculations using the _AccRQA_ and _PyRQA_ package were performed on a Nvidia H100 HBM3 with 80GB and OpenCL 3.0 CUDA. For _crqa_ (R), _AccRQA_, _RQA_OpenMP_, _RQA_Samp_, _RecurrenceMicrostates_, and _PyRQA_ the calculation cannot be separated into RP and RQA calculations, therefore, they appear only in the figure on the total computation time.
+The results presented here are from calculations performed on the "Foote" high performance cluster at PIK. A compute node consists of one AMD EPYC 9554 32-Core Processor with 128 CPUs, 3.75 GHz, and with 754GB RAM max per node. The GPU calculations using the _AccRQA_ and _PyRQA_ package were performed on a Nvidia H100 HBM3 with 80GB and OpenCL 3.0 CUDA. 
 
-_Note:_ Not all implementations completed successfully; some terminated prematurely due to excessive RAM usage before reaching the target data length.
+For _crqa_ (R), _RQA_HPC_ the calculation times for recurrence plots (RP) and recurrence quantification analysis (RQA) cannot be measured separately. Therefore, these implementations are represented only in the figure for total computation time.
+
+For _RQA_OpenMP_, _RQA_Samp_, _RecurrenceMicrostates_, and _apRQA_, the calculations include only RQA. Thus, they are represented only in the figure for RQA computation time.
+
+### Notes
+
+1. Not all implementations completed successfully; some terminated prematurely due to excessive RAM usage before reaching the target data length.
+
+2. In a previous version, the calculation times of some implementations were incorrectly included in the total times, despite reflecting only RQA calculations. This provided an inaccurate representation of their performance.
 
 ![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/master/rp_rqa_speed-test.svg "Computation speed")
