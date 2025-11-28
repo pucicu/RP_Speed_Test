@@ -4,6 +4,7 @@
 from scipy.integrate import odeint
 import numpy as np
 import time
+import gc
 from pyunicorn.timeseries import RecurrencePlot
 
 # results file
@@ -28,6 +29,7 @@ with open(filename, "w") as f:
    for i in range(0,len(tspanRP)):
        tRP_ = 0
        tRQA_ = 0
+       gc.disable()
        for j in range(0,K):
 
            # solve the ODE
@@ -48,6 +50,7 @@ with open(filename, "w") as f:
                tRQA_ = np.nan
                break
            #print("  ", j)
+       gc.enable()
        tspanRP[i] = tRP_ / K # average calculation time
        tspanRQA[i] = tRQA_ / K # average calculation time
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])

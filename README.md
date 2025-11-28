@@ -54,7 +54,7 @@ For Python, see file `requirements.txt` (you can use `pip install -r requirement
 
 ## Procedure
 
-The recurrence analysis is performed on the time series obtained from the Rössler system with growing length, starting with _N_ = 200 (ending at max. _N_ = 500,000 or _N_ = 1,000,000), increasing in steps to provide equidistant points along the _x_-axis in a log-log plot. The increase of length will be stopped when the calculation time exceeds 600 sec. For each selected length, the calculation time is measured 10 times and then averaged.
+The recurrence analysis is performed on the time series obtained from the Rössler system with growing length, starting with _N_ = 200 (ending at max. _N_ = 1,000,000), increasing in steps to provide equidistant points along the _x_-axis in a log-log plot. The increase of length will be stopped when the calculation time exceeds 600 sec. For each selected length, the calculation time is measured 10 times and then averaged.
 
 Not for all implementations all RQA measures are available (e.g., for simple Python code). The calculation of network measures were disabled in all examples.
 

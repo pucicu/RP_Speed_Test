@@ -5,6 +5,7 @@ from scipy.integrate import odeint
 import numpy as np
 import time
 import sys
+import gc
 sys.path.append('..')
 from Libs.rp import *
 
@@ -33,6 +34,7 @@ with open(filename, "w") as f:
    for i in range(0,len(tspanRP)):
        tRP_ = 0
        tRQA_ = 0
+       gc.disable()
        for j in range(0,K):
            x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
            xe = embed(x[1000:(1000+N[i]),0], 3, 6)
@@ -51,6 +53,7 @@ with open(filename, "w") as f:
                tRQA_ = np.nan
                break
 
+       gc.enable()
        tspanRP[i] = tRP_ / K # average calculation time
        tspanRQA[i] = tRQA_ / K # average calculation time
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])

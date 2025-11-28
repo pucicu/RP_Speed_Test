@@ -11,34 +11,37 @@ end
 % remove some results
 idx = []
 for i = 1:length(files)
-   if strcmpi(txt{i}, 'RQA_HPC') || strcmpi(txt{i}, 'RQA_OpenMP_gcc')
+   if strcmpi(txt{i}, 'RQA_xxxxssHPC') || strcmpi(txt{i}, 'RQA_OpenMP_gcc') || strcmpi(txt{i}, 'matlab_crp') || strcmpi(txt{i}, 'matlab_vector')
       idx = [idx, i];
    end
 end
 x(idx) = []; txt(idx) = [];
 
 %% set line properties
-c_matlab = [.47 .67 .19];
+c_matlab = [.93 .7 .13];
 c_R = [0 0 0];
+c_C = [.4 .6 .1];
+c_C2 = [.2 .9 .0];
 c_julia = [.13 .7 .93];
-c_julia2 = [0 .45 .74];
-c_C = [.85 .33 .1];
-c_python = [.9 .5 .0];
-c_misc =[.93 .7 .13]; % [.7 .0 .0] [.1 .8 .0] [.3 .3 .8] [.6 .3 .1] [0 .1 .8]
-props(1).Color = c_R; props(1).LineWidth = 2; props(1).LineStyle = ':';
-props(2).Color = c_C; props(2).LineWidth = 3; props(2).LineStyle = '-';
-props(3).Color = c_julia2; props(3).LineWidth = 3; props(3).LineStyle = ':';
-props(4).Color = c_julia; props(4).LineWidth = 2; props(4).LineStyle = '--';
-props(5).Color = c_julia; props(5).LineWidth = 1; props(5).LineStyle = '-';
-props(6).Color = c_julia; props(6).LineWidth = 1; props(6).LineStyle = '-.';
-props(7).Color = c_matlab; props(7).LineWidth = 3; props(7).LineStyle = ':';
-props(8).Color = c_python; props(8).LineWidth = 1; props(8).LineStyle = '-';
-props(9).Color = c_python; props(9).LineWidth = 2; props(9).LineStyle = '-.';
-props(10).Color = c_python; props(10).LineWidth = 2; props(10).LineStyle = ':';
-props(11).Color = c_python; props(11).LineWidth = 1; props(11).LineStyle = '--';
-props(12).Color = c_python; props(12).LineWidth = 2; props(12).LineStyle = '--';
-props(13).Color = [.6 .3 .1]; props(13).LineWidth = 2; props(13).LineStyle = '-.';
-props(14).Color = [0 .1 .8]; props(14).LineWidth = 2; props(14).LineStyle = ':';
+c_julia2 = [.75 .45 .74];
+c_python = [.95 .6 .0];
+c_python2 = [.75 .33 .1];
+c_misc =[.93 .7 .13]; % [.7 .0 .0] [.3 .3 .8] [.6 .3 .1] [0 .1 .8]
+props(1).Color = c_R; props(1).LineWidth = 3; props(1).LineStyle = ':';
+props(2).Color = c_C; props(2).LineWidth = 2; props(2).LineStyle = '--';
+props(3).Color = c_C2; props(3).LineWidth = 2; props(3).LineStyle = '--';
+props(4).Color = c_julia2; props(4).LineWidth = 2; props(4).LineStyle = ':';
+props(5).Color = c_julia2; props(5).LineWidth = 1; props(5).LineStyle = '-.';
+props(6).Color = c_julia; props(6).LineWidth = 3; props(6).LineStyle = ':';
+props(7).Color = c_julia; props(7).LineWidth = 2; props(7).LineStyle = '--';
+props(8).Color = c_julia; props(8).LineWidth = 1; props(8).LineStyle = '-';
+props(9).Color = c_python2; props(9).LineWidth = 2; props(9).LineStyle = '--';
+props(10).Color = c_python2; props(10).LineWidth = 2; props(10).LineStyle = '-.';
+props(11).Color = c_python; props(11).LineWidth = 2; props(11).LineStyle = '-.';
+props(12).Color = c_python; props(12).LineWidth = 2; props(12).LineStyle = ':';
+props(13).Color = c_python; props(13).LineWidth = 1; props(13).LineStyle = '-';
+props(13).Color = c_misc; props(13).LineWidth = 2; props(13).LineStyle = '-.';
+props(14).Color = c_misc; props(14).LineWidth = 2; props(14).LineStyle = ':';
 
 
 %% create figure
@@ -49,26 +52,22 @@ set(gcf, 'pos', [87 537 950 230])
 %% plot calculation time for calculation of RP
 ha1 = nexttile; hold on
 for i = 1:length(x)
-   if size(x{i},2) == 3
-       h1(i) = loglog(x{i}(:,1), (x{i}(:,2)), props(i));
-   end
+   h1(i) = loglog(x{i}(:,1), (x{i}(:,2)), props(i));
 end
 
 %% plot calculation time for calculation of RQA
 ha2 = nexttile; hold on
 for i = 1:length(x)
-   if size(x{i},2) == 3
-       h2(i) = loglog(x{i}(:,1), (x{i}(:,3)), props(i));
-   end
+   h2(i) = loglog(x{i}(:,1), (x{i}(:,3)), props(i));
 end
 
 %% plot total calculation time
 ha3 = nexttile; hold on
 for i = 1:length(x)
-   loglog(x{i}(:,1), sum(x{i}(:,2:end),2), props(i));
-   idx = find(x{i}(:,2)); idx(isnan(x{i}(idx,2))) = []; idx(1:floor(length(idx)/2)) = [];
-   p_ = polyfit(log10(x{i}(idx,1)), log10(x{i}(idx,2)),1);
-   p(i) = p_(1);
+   loglog(x{i}(:,1), x{i}(:,4), props(i));
+%   idx = find(x{i}(:,4)); idx(isnan(x{i}(idx,4))) = []; idx(1:floor(length(idx)/2)) = [];
+%   p_ = polyfit(log10(x{i}(idx,1)), log10(x{i}(idx,4)),1);
+%   p(i) = p_(1);
 end
 
 %% beautify the plots
@@ -98,11 +97,13 @@ title(ha2, 'Calculation time RQA')
 title(ha3, 'Calculation time total')
 
 ha4 = nexttile; axis off
-h = legend(ha3,strrep(txt,'_','\_'), 'location', 'layout');
+h = legend(ha2,strrep(txt,'_','\_'), 'location', 'layout');
 h.Layout.Tile=4;
 h.Box = 'off';
 h.FontSize=11;
-h.Parent.Position = [0.06 0.15 0.95 0.76]
+h.Parent.Position = [0.06 0.15 0.95 0.76];
+h.Location = 'none';
+h.Position = [0.7329 0.1532 0.1415 0.7535];
 
 %% export figure as SVG
 print(gcf,'rp_rqa_speed-test.svg', '-dsvg')
