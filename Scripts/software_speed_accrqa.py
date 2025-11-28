@@ -49,6 +49,7 @@ dt = 0.05; # sampling time
 
 with open(filename, "w") as f:
    for i in range(0,len(tspanRP)):
+   
        tRP_ = 0
        tRQA_ = 0
        # initialize calculation (avoids artifical large compute times for first run)
@@ -63,19 +64,28 @@ with open(filename, "w") as f:
 
            # solve the ODE
            x = odeint(roessler, np.random.rand(3), np.arange(0, dt*(1000+N[i]), .05))
-
-           start_time = time.time()
-           rp = rqa.RP(x[1000:(1000+N[i]),0], 6, 3, 1.2, distance_type=rqa.accrqaDistance("euclidean"));
-           tRP_ += (time.time() - start_time)
            
-           try:
-               start_time = time.time()
-               output_RR = rqa.RR(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
-               output_DET = rqa.DET(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
-               output_LAM = rqa.LAM(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+           if i < 1 or tspanRP[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+                   start_time = time.time()
+                   rp = rqa.RP(x[1000:(1000+N[i]),0], 6, 3, 1.2, distance_type=rqa.accrqaDistance("euclidean"));
+                   tRP_ += (time.time() - start_time)
+               except RuntimeError:
+                   tRP_ = np.nan
+           else:
+               tRP_ = np.nan
+               
+           if i < 1 or tspanRQA[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+                   start_time = time.time()
+                   output_RR = rqa.RR(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+                   output_DET = rqa.DET(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
+                   output_LAM = rqa.LAM(x[1000:(1000+N[i]),0], np.array([6], dtype=np.intc), np.array([3], dtype=np.intc), np.array([2], dtype=np.intc), np.array([1.2]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag), tidy_data = False);
 
-               tRQA_ += (time.time() - start_time)
-           except:
+                   tRQA_ += (time.time() - start_time)
+               except RuntimeError:
+                   tRQA_ = np.nan
+           else:
                tRQA_ = np.nan
            
        tspanRP[i] = tRP_ / K             # average calculation time
@@ -88,5 +98,5 @@ with open(filename, "w") as f:
        f.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
        f.flush()
 
-       if tspanRP[i] + tspanRQA[i] >= maxT:
+       if (tspanRP[i] >= maxT) and (tspanRQA[i] >= maxT):
           break

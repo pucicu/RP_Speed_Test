@@ -6,7 +6,9 @@
 #SBATCH --error=../Logs/%x-%j.err
 #SBATCH --time=24:00:00
 #SBATCH --partition=gpu
+#SBATCH --cpus-per-task=1
 #SBATCH --gres=gpu:1
+#SBATCH --mem=640G
 
 echo "------------------------------------------------------------"
 echo "SLURM JOB ID: $SLURM_JOBID"

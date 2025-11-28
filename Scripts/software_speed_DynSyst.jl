@@ -69,16 +69,28 @@ open(filename, "w") do io
           local sol = solve(prob, Tsit5(), dt=dt,saveat=dt);
           local x = embed(sol[1,1000:1000+N_], 3, 6);
 
-          try
-             t1 = @timed local R = RecurrenceMatrix(x, 1.2, parallel=parallel)
-             t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel)
-             tRP_ = tRP_ + t1.time;
-             tRQA_ = tRQA_ + t2.time;
-          catch
+          if i < 2 || tspanRP[i-1] < maxT # if previous calculations exceed limit, skip calculation
+              try
+                 t1 = @timed local R = RecurrenceMatrix(x, 1.2, parallel=parallel)
+                 tRP_ = tRP_ + t1.time;
+              catch
+                 tRP_ = NaN
+              end
+          else
              tRP_ = NaN
+          end
+
+          if i < 2 || (tspanRQA[i-1] < maxT && tspanRP[i-1] < maxT) # if previous calculations exceed limit, skip calculation
+              try
+                 t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=true, parallel=parallel)
+                 tRQA_ = tRQA_ + t2.time;
+              catch
+                 tRQA_ = NaN
+              end
              tRQA_ = NaN
           end
           flush(stdout)
+
       end
       tspanRP[i] = tRP_ / K; # average calculation time
       tspanRQA[i] = tRQA_ / K; # average calculation time
@@ -89,7 +101,7 @@ open(filename, "w") do io
       write(io, "$N_, $(tspanRP[i]), $(tspanRQA[i]), $(tspanRP[i] + tspanRQA[i])\n")
       flush(io)
 
-      if tspanRP[i] + tspanRQA[i] >= maxT
+      if (tspanRP[i] >= maxT) && (tspanRQA[i] >= maxT)
         break
       end
    end

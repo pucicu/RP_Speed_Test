@@ -67,30 +67,40 @@ with open(filename, "w") as f:
        gc.disable()
        for j in range(0, K):
 
-           try:
-               start_time = time.time()
-               rpComputation = RPComputation.create(settings, verbose=False)
-               rpR = rpComputation.run()
-               tRP_ += (time.time() - start_time)
-               
-               start_time = time.time()
-               rqaComputation = RQAComputation.create(settings, verbose=False)
-               R = rqaComputation.run()
-               R.min_diagonal_line_length = 2
-               R.min_vertical_line_length = 2
+           if i < 1 or tspanRP[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+                   start_time = time.time()
+                   rpComputation = RPComputation.create(settings, verbose=False)
+                   rpR = rpComputation.run()
+                   tRP_ += (time.time() - start_time)
+               except:
+                   tRP_ = np.nan
 
-               rr = R.recurrence_rate
-               det = R.determinism
-               l = R.average_diagonal_line
-               entr = R.entropy_diagonal_lines
-               lam = R.laminarity
-               tt = R.trapping_time
+           else:
+               tRP_ = np.nan
                
-               tRQA_ += (time.time() - start_time)
-           except:
-               R = 0
-               t_ = np.nan
-               break
+           if i < 1 or tspanRQA[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+                   start_time = time.time()
+                   rqaComputation = RQAComputation.create(settings, verbose=False)
+                   R = rqaComputation.run()
+                   R.min_diagonal_line_length = 2
+                   R.min_vertical_line_length = 2
+
+                   rr = R.recurrence_rate
+                   det = R.determinism
+                   l = R.average_diagonal_line
+                   entr = R.entropy_diagonal_lines
+                   lam = R.laminarity
+                   tt = R.trapping_time
+
+                   tRQA_ += (time.time() - start_time)
+               except:
+                   R = 0
+                   t_RQA = np.nan
+                   break
+           else:
+               tRQA_ = np.nan
            
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
@@ -101,5 +111,5 @@ with open(filename, "w") as f:
        f.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
        f.flush()
 
-       if (tspanRP[i] + tspanRQA[i]) >= maxT:
+       if (tspanRP[i]) >= maxT and (tspanRQA[i]) >= maxT:
           break
