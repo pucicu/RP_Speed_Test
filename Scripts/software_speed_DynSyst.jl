@@ -70,7 +70,7 @@ open(timeResultsfile, "w") do f_time
                  t1 = @timed local R = RecurrenceMatrix(xe, 1.2, parallel=parallel)
                  t2 = @timed local Q = rqa(R, theiler = 1, onlydiagonal=false, parallel=parallel)
                  tRP_ = tRP_ + t1.time;
-                 tRQA_ = tRQA_ + t2.time;
+                 tRQA_ = tRQA_ + t2.time + tRP_; # RQA needs to have RP first
                  RQA_[j,:] = [Q[:RR], Q[:DET], Q[:L], Q[:ENTR], Q[:LAM], Q[:TT]]
 
               catch
@@ -88,12 +88,12 @@ open(timeResultsfile, "w") do f_time
           flush(stdout)
 
           # save results
-          write(f_time, "$N_, $(tspanRP[i]), $(tspanRQA[i]), $(tspanRP[i] + tspanRQA[i])\n")
+          write(f_time, "$N_, $(tspanRP[i]), $(tspanRQA[i])\n")
           flush(f_time)
           write(f_rqa, string(N[i], ", ", join(mRQA[i, :], ", "), ", ", join(vRQA[i, :], ", "), "\n"))
           flush(f_rqa)
 
-          if tspanRP[i] + tspanRQA[i] >= maxT
+          if (tspanRP[i] >= maxT) && (tspanRQA[i] >= maxT):
             break
           end
        end

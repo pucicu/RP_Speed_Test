@@ -3,6 +3,7 @@
 # import required packages
 import numpy as np
 import time
+import gc
 from pyunicorn.timeseries import RecurrencePlot
 
 # results files
@@ -35,6 +36,9 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        tRP_ = 0
        tRQA_ = 0
        RQA_ = np.zeros((K, 6))
+
+       gc.disable()
+
        for j in range(0,K):
 
            try:
@@ -49,13 +53,16 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
                ent = R.diag_entropy(l_min=lmin)
                lam = R.laminarity(v_min=lmin)
                tt = R.trapping_time(v_min=lmin)
-               tRQA_ += (time.time() - start_time)
+               tRQA_ += (time.time() - start_time) + tRP_ # RQA requires RP
                RQA_[j,:] = [rr, det, l, ent, lam, tt]
            except:
                tP_ = np.nan
                tRQA_ = np.nan
                RQA_[j,:] = [np.nan,np.nan,np.nan,np.nan,np.nan,np.nan]
                break
+
+       gc.enable()
+
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
        mRQA[i,:] = np.mean(RQA_, axis=0) # average RQA
@@ -63,11 +70,11 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
 
        # save results
-       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
+       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
        f_time.flush()
        f_rqa.write(f"{N[i]}, {', '.join(str(v) for v in mRQA[i,:])}, {', '.join(str(v) for v in vRQA[i,:])}\n")
        f_rqa.flush()
 
        # stop if calculation exceeds limit
-       if tspanRP[i] + tspanRQA[i] >= maxT:
+       if tspanRQA[i] >= maxT:
           break

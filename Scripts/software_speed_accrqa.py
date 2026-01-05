@@ -3,6 +3,7 @@
 # import required packages
 import numpy as np
 import time
+import gc
 import accrqa as rqa
 import argparse
 
@@ -59,19 +60,34 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        det = rqa.DET(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag));
        lam = rqa.LAM(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = False, comp_platform = rqa.accrqaCompPlatform(compFlag));
 
+       gc.disable()
+
        for j in range(0,K):
 
-           start_time = time.time()
-           rp = rqa.RP(x[0:N[i]], tau, m, e, distance_type=rqa.accrqaDistance("euclidean"));
-           tRP_ += (time.time() - start_time)
+           if i < 1 or tspanRP[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+                   start_time = time.time()
+                   rp = rqa.RP(x[0:N[i]], tau, m, e, distance_type=rqa.accrqaDistance("euclidean"));
+                   tRP_ += (time.time() - start_time)
+               except RuntimeError:
+                   tRP_ = np.nan
+           else:
+               tRP_ = np.nan
            
-           start_time = time.time()
-           det = rqa.DET(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag));
-           lam = rqa.LAM(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = False, comp_platform = rqa.accrqaCompPlatform(compFlag));
-           tRQA_ += (time.time() - start_time)
+           if i < 1 or tspanRQA[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+                   start_time = time.time()
+                   det = rqa.DET(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = True, comp_platform = rqa.accrqaCompPlatform(compFlag));
+                   lam = rqa.LAM(x[0:N[i]], np.array([tau], dtype=np.intc), np.array([m], dtype=np.intc), np.array([lmin], dtype=np.intc), np.array([e]), distance_type=rqa.accrqaDistance("euclidean"), calculate_ENTR = False, comp_platform = rqa.accrqaCompPlatform(compFlag));
+                   tRQA_ += (time.time() - start_time)
 
-           RQA_[j,:] = [det.RR.item(), det.DET.item(), det.L.item(), det.ENTR.item(), lam.LAM.item(), lam.TT.item()]
-           time.sleep(.1)                # wait until process has finished
+                   RQA_[j,:] = [det.RR.item(), det.DET.item(), det.L.item(), det.ENTR.item(), lam.LAM.item(), lam.TT.item()]
+               except RuntimeError:
+                   tRQA_ = np.nan
+           else:
+               tRQA_ = np.nan
+
+       gc.enable()
            
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
@@ -80,10 +96,10 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
 
        # save results
-       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
+       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
        f_time.flush()
        f_rqa.write(f"{N[i]}, {', '.join(str(v) for v in mRQA[i,:])}, {', '.join(str(v) for v in vRQA[i,:])}\n")
        f_rqa.flush()
 
-       if tspanRP[i] + tspanRQA[i] >= maxT:
+       if (tspanRP[i] >= maxT or tspanRP[i] == np.nan) and (tspanRQA[i] >= maxT or tspanRP[i] == np.nan):
           break

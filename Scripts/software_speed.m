@@ -5,65 +5,60 @@
 addpath('../Libs/rp')
 
 %% results file
-filename = '../Results/time_matlab_vector.csv';
+timeResultsfile = '../Results/time_matlab_vector.csv';
+rqaResultsfile = '../Results/rqa_matlab_vector.csv';
 
-%% the Roessler ODE
-r = @(t,x) [-(x(2) + x(3)); 
-            x(1) + 0.25 * x(2);
-            0.25 + (x(1) - 4) * x(3)];
+%% data file
+datafile = '../Libs/roessler.csv';
 
-%% solve the ODE        
-options = odeset('RelTol',1e-8,'AbsTol',1e-10);
-[t x] = ode45(r,[0:0.05:2500],[0;0;0]);
-
-%% skip first 1000 points
-t(1:1000) = []; x(1:1000,:) = [];
+%% import data
+x = load(datafile);
 
 %% length of time series for RQA calculation test
-N = round(10.^(2:.075:5.06));
+N = round(10.^(log10(200):.075:log10(200000)));
 
 
 %% calculate RP and RQA for different length
-tspanRP = zeros(length(N), 1); % result vector computation time
+tspanRP = zeros(length(N), 1);  % result vector computation time
 tspanRQA = zeros(length(N), 1); % result vector computation time
-K = 10; % number of runs (for averaging time)
-maxT = 60; % stop calculations if maxT is exceeded
-
-% % using CRP toolbox (slow because of GUI framework)
-% for i = 1:length(N)
-%     tic
-%     %R = crp(x(1:1+N(i)-1,3), 3, 6, 1.2, 'euc', 'nonorm','silent'); 
-%     Q = crqa(x(1:1+N(i)-1,3), 3, 6, 1.2, [], 'euc', 'nonorm','silent'); 
-%     tspan(i) = toc;
-% end
-% tspan
+mRQA = zeros(length(N), 6);     % result vector RQA average
+vRQA = zeros(length(N), 6);     % result vector RQA variance
+K = 10;                         % number of runs (for averaging time)
+maxT = 600;                     % stop calculations if maxT is exceeded
+m = 3;                          % embedding dimension
+tau = 6;                        % embedding delay
+e = 1.2;                        % recurrence threshold
+lmin = 2;                       % minimal line length
 
 for i = 1:length(N)
     tRP_ = 0;
     tRQA_ = 0;
-    xe = embed(x(1:1+N(i)-1,1), 3, 6);
+    RQA_ = zeros(K, 6);
+    xe = embed(x(1:1+N(i)-1,1), m, tau);
     for j = 1:K
-        %R = squareform(pdist(xe) <= 1.2);
         tic
-        R = rp(xe, 1.2, 'fix', 'euc', 'matlabvector'); % a bit slower than previous line because of some testing expressions
+        %R = squareform(pdist(xe) <= e);
+        R = rp(xe, e, 'fix', 'euc', 'matlabvector'); % a bit slower than previous line because of some testing expressions
         tRP_ = tRP_ + toc;
         tic
-        Q = rqa(R, 2, 1, 'non');
+        Q = rqa(R, lmin, 1, 'non');
         tRQA_ = tRQA_ + toc;
-        
-        disp(sprintf('  %i', j))
+        RQA_(j,:) = Q([1 2 3 5 6 7]);
     end
-    tspanRP(i) = tRP_ / K; % average calculation time
+    tspanRP(i) = tRP_ / K;   % average calculation time
     tspanRQA(i) = tRQA_ / K; % average calculation time
+    mRQA(i,:) = mean(RQA_);  % average RQA
+    vRQA(i,:) = var(RQA_);   % variance RQA
     disp(sprintf('%i: %f %f', N(i), tspanRP(i), tspanRQA(i)))
     
     % save results
     ex = [N(:) tspanRP(:) tspanRQA(:)];
-    save(filename,'ex','-ascii','-tabs')
+    save(timeResultsfile,'ex','-ascii','-tabs')
+    ex = [N(:) mRQA vRQA];
+    save(rqaResultsfile,'ex','-ascii','-tabs')
 
-    if tspanRP(i) + tspanRQA(i) >= maxT, break, end
+    if tspanRP(i) >= maxT & tspanRQA(i) >= maxT, break, end
     
 end
-N(1:4) = []; tspanRP(1:4) = []; tspanRQA(1:4) = [];% remove first points before N=200
 
 exit

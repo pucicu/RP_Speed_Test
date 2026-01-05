@@ -2,6 +2,7 @@
 # import required packages
 import numpy as np
 import time
+import gc
 from pyrqa.time_series import TimeSeries
 from pyrqa.settings import Settings
 from pyrqa.analysis_type import Classic
@@ -66,36 +67,50 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
                        neighbourhood=FixedRadius(e),
                        similarity_measure=EuclideanMetric,
                        theiler_corrector=1)
+
+       gc.disable()
+
        for j in range(0, K):
 
-           try:
-               start_time = time.time()
-               rpComputation = RPComputation.create(settings, verbose=False)
-               rpR = rpComputation.run()
-               tRP_ += (time.time() - start_time)
-               
-               start_time = time.time()
-               rqaComputation = RQAComputation.create(settings, verbose=False)
-               R = rqaComputation.run()
-               R.min_diagonal_line_length = lmin
-               R.min_vertical_line_length = lmin
-
-               rr = R.recurrence_rate
-               det = R.determinism
-               l = R.average_diagonal_line
-               entr = R.entropy_diagonal_lines
-               lam = R.laminarity
-               tt = R.trapping_time
-               
-               tRQA_ += (time.time() - start_time)
-               RQA_[j,:] = [rr, det, l, entr, lam, tt]
-           except:
-               print(f'Error in run {i}')
-               R = 0
+           if i < 1 or tspanRP[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+                   start_time = time.time()
+                   rpComputation = RPComputation.create(settings, verbose=False)
+                   rpR = rpComputation.run()
+                   tRP_ += (time.time() - start_time)
+               except:
+                   tRP_ = np.nan
+           else:
                tRP_ = np.nan
-               tRQA_ = np.nan
+               
+           if i < 1 or tspanRQA[i-1] < maxT: # if previous calculations exceed limit, skip calculation
+               try:
+               
+                   start_time = time.time()
+                   rqaComputation = RQAComputation.create(settings, verbose=False)
+                   R = rqaComputation.run()
+                   R.min_diagonal_line_length = lmin
+                   R.min_vertical_line_length = lmin
+
+                   rr = R.recurrence_rate
+                   det = R.determinism
+                   l = R.average_diagonal_line
+                   entr = R.entropy_diagonal_lines
+                   lam = R.laminarity
+                   tt = R.trapping_time
+
+                   tRQA_ += (time.time() - start_time)
+                   RQA_[j,:] = [rr, det, l, entr, lam, tt]
+               except:
+                   R = 0
+                   RQA_[j,:] = [np.nan,np.nan,np.nan,np.nan,np.nan,np.nan]
+                   t_RQA = np.nan
+                   break
+           else:
                RQA_[j,:] = [np.nan,np.nan,np.nan,np.nan,np.nan,np.nan]
-               break
+               tRQA_ = np.nan
+
+       gc.enable()
 
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
@@ -104,10 +119,10 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
 
        # save results
-       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}, {tspanRP[i] + tspanRQA[i]}\n")
+       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
        f_time.flush()
        f_rqa.write(f"{N[i]}, {', '.join(str(v) for v in mRQA[i,:])}, {', '.join(str(v) for v in vRQA[i,:])}\n")
        f_rqa.flush()
 
-       if tspanRP[i] + tspanRQA[i] >= maxT:
+       if (tspanRP[i] >= maxT or tspanRP[i] == np.nan) and (tspanRQA[i] >= maxT or tspanRP[i] == np.nan):
           break
