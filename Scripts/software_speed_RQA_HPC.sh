@@ -16,7 +16,7 @@ LMIN=2
 E=1.2
 ARGS=($DIM $TAU $LMIN 1 $E 0 0 $TMPFILE)
 
-REPEATS=2
+REPEATS=10
 
 # Functions for mean and varianz
 mean() {
@@ -63,7 +63,6 @@ generate_N_list() {
         }
     '
 }
-
 
 # ----------------------------------------
 # Main Loop

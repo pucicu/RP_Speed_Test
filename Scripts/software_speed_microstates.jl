@@ -3,6 +3,7 @@
 # import required packages
 using DelayEmbeddings
 using DelimitedFiles
+using Statistics
 using RecurrenceMicrostatesAnalysis
 
 # results file

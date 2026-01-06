@@ -5,6 +5,7 @@ using DelayEmbeddings
 using DynamicalSystems
 using DelimitedFiles
 using ArgParse
+using Statistics
 
 
 # find argument for prallelisation
@@ -93,7 +94,7 @@ open(timeResultsfile, "w") do f_time
           write(f_rqa, string(N[i], ", ", join(mRQA[i, :], ", "), ", ", join(vRQA[i, :], ", "), "\n"))
           flush(f_rqa)
 
-          if (tspanRP[i] >= maxT) && (tspanRQA[i] >= maxT):
+          if (tspanRP[i] >= maxT) && (tspanRQA[i] >= maxT)
             break
           end
        end

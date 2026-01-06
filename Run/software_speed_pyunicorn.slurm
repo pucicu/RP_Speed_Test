@@ -14,7 +14,7 @@ echo "SLURM JOB ID: $SLURM_JOBID"
 echo "------------------------------------------------------------"
 
 ## 
-module load python
+module load python gcc/13.2.0 openssl/3.0.12 libffi/3.4.4
 
 source ../.venv/bin/activate  
 export PYTHONUNBUFFERED=1

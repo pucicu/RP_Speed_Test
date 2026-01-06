@@ -18,6 +18,7 @@ if (( SUBMIT_HPC == 1 )); then
    sbatch software_speed_R.slurm
    sbatch software_speed_RQA_OpenMP.slurm
    sbatch software_speed_RQA_HPC.slurm
+   sbatch software_speed_matlab.slurm 
 
 else
    # run on login node (or any other local compute node)
@@ -26,7 +27,10 @@ else
    module load python cuda julia R
    
    # use local Python environment
-   source ../.venv/bin/activate  
+   source ../.venv/bin/activate
+   
+   # add MATLAB path
+   export PATH=$PATH:/p/projects/synchronet/matlab/R2024b/bin
 
    python3.12 ../Scripts/software_speed_accrqa.py --compFlag=cpu
    python3.12 ../Scripts/software_speed_accrqa.py --compFlag=nv_gpu
@@ -38,6 +42,6 @@ else
    julia --threads 1 ../Scripts/software_speed_DynSyst.jl --parallel false
    julia --threads 32../Scripts/ software_speed_DynSyst.jl --parallel true
    Rscript ../Scripts/software_speed.R
-   # #matlab -nodesktop < ../Scripts/software_speed.m
+   matlab -nodesktop < ../Scripts/software_speed.m
 
 fi
