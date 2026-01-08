@@ -91,3 +91,6 @@ for (i in 1:length(N)) {
        break
     }
 }    
+
+close(f_time)
+close(f_rqa)
