@@ -89,6 +89,8 @@ for N in $(generate_N_list); do
 
         start=$(date +%s.%N)
         srun -n "$SLURM_NTASKS" "$EXEC" "${ARGS[@]}" > $TMPRESULTSFILE
+        start=$(date +%s.%N)
+        srun -n "$SLURM_NTASKS" "$EXEC" "${ARGS[@]}" > $TMPRESULTSFILE
         end=$(date +%s.%N)
         t=$(echo "$end - $start" | bc)
         echo $t
