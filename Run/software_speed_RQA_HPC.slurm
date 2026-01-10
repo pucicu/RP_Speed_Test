@@ -4,7 +4,7 @@
 #SBATCH --job-name=rqa_hpc_speedtest
 #SBATCH --output=../Logs/%x-%j.out
 #SBATCH --error=../Logs/%x-%j.err
-#SBATCH --time=00:30:00
+#SBATCH --time=04:00:00
 #SBATCH --nodes=16
 #SBATCH --ntasks=128
 #SBATCH --mem=600G
