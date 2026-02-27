@@ -89,8 +89,6 @@ for N in $(generate_N_list); do
 
         start=$(date +%s.%N)
         srun -n "$SLURM_NTASKS" "$EXEC" "${ARGS[@]}" > $TMPRESULTSFILE
-        start=$(date +%s.%N)
-        srun -n "$SLURM_NTASKS" "$EXEC" "${ARGS[@]}" > $TMPRESULTSFILE
         end=$(date +%s.%N)
         t=$(echo "$end - $start" | bc)
         echo $t
@@ -119,16 +117,21 @@ for N in $(generate_N_list); do
     echo "$N,NaN,$mean" >> "$TIMERESULTSFILE"
     
     # RQA mean and variance
-    out=()
+    outD=()
     for arr in RR DET L DE LAM TT; do
         eval "values=(\"\${$arr[@]}\")"
         m=$(mean "${values[@]}")
+        outD+=("$m")
+    done
+    outV=()
+    for arr in RR DET L DE LAM TT; do
+        eval "values=(\"\${$arr[@]}\")"
         v=$(variance "${values[@]}")
-        out+=("$m,$v")
+        outV+=("$v")
     done
 
     # Append to CSV
-    echo "$N, ${out[*]}" | tr ' ' ',' >> "$RQARESULTSFILE"
+    echo "$N${outD[*]}${outV[*]}" | tr ' ' ',' >> "$RQARESULTSFILE"
    
 done
 rm $TMPFILE
