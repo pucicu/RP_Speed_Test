@@ -52,7 +52,7 @@ for i = 1:length(N)
     disp(sprintf('%i: %f %f', N(i), tspanRP(i), tspanRQA(i)))
     
     % save results
-    ex = [N(:) tspanRP(:) tspanRQA(:)];
+    ex = [N(:) tspanRP(:) tspanRP(:)+tspanRQA(:)]; % RQA needs calculated RP
     save(timeResultsfile,'ex','-ascii','-tabs')
     ex = [N(:) mRQA vRQA];
     save(rqaResultsfile,'ex','-ascii','-tabs')
