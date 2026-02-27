@@ -1,0 +1,62 @@
+%% speed test
+
+%% results file
+timeResultsfile = '../Results/time_matlab_crptool.csv';
+rqaResultsfile = '../Results/rqa_matlab_crptool.csv';
+
+%% data file
+datafile = '../Libs/roessler.csv';
+
+%% import data
+x = load(datafile);
+
+%% length of time series for RQA calculation test
+N = round(10.^(log10(200):.075:log10(200000)));
+
+
+%% calculate RP and RQA for different length
+tspanRP = zeros(length(N), 1);  % result vector computation time
+tspanRQA = zeros(length(N), 1); % result vector computation time
+mRQA = zeros(length(N), 6);     % result vector RQA average
+vRQA = zeros(length(N), 6);     % result vector RQA variance
+K = 10;                         % number of runs (for averaging time)
+maxT = 600;                     % stop calculations if maxT is exceeded
+m = 3;                          % embedding dimension
+tau = 6;                        % embedding delay
+e = 1.2;                        % recurrence threshold
+lmin = 2;                       % minimal line length
+
+
+% using CRP toolbox (slow because of GUI framework)
+for i = 1:length(N)
+    tRP_ = 0;
+    tRQA_ = 0;
+    RQA_ = zeros(K, 6);
+    for j = 1:K
+        tic
+        R = crp(x_, m, tau, e, 'non', 'euc', 'sil');
+        tRP_ = tRP_ + toc;
+        tic
+        Q = crqa(x_, m, tau, e, [], [], lmin, lmin, 'non', 'euc', 'sil');
+        tRQA_ = tRQA_ + toc;
+        RQA_(j,:) = Q([1 2 3 5 6 7]);
+        
+        disp(sprintf('  %i', j))
+    end
+    tspanRP(i) = tRP_ / K; % average calculation time
+    tspanRQA(i) = tRQA_ / K; % average calculation time
+    mRQA(i,:) = mean(RQA_);  % average RQA
+    vRQA(i,:) = var(RQA_);   % variance RQA
+    disp(sprintf('%i: %f %f', N(i), tspanRP(i), tspanRQA(i)))
+    
+    % save results
+    ex = [N(:) tspanRP(:) tspanRQA(:)];
+    save(timeResultsfile,'ex','-ascii','-tabs')
+    ex = [N(:) mRQA vRQA];
+    save(rqaResultsfile,'ex','-ascii','-tabs')
+
+    if tspanRP(i) >= maxT & tspanRQA(i) >= maxT, break, end
+    
+end
+
+exit
