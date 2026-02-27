@@ -34,14 +34,12 @@ for i = 1:length(N)
     RQA_ = zeros(K, 6);
     for j = 1:K
         tic
-        R = crp(x_, m, tau, e, 'non', 'euc', 'sil');
+        R = crp(x(1:1+N(i)-1,1), m, tau, e, 'non', 'euc', 'sil');
         tRP_ = tRP_ + toc;
         tic
-        Q = crqa(x_, m, tau, e, [], [], lmin, lmin, 'non', 'euc', 'sil');
+        Q = crqa(x(1:1+N(i)-1,1), m, tau, e, [], [], lmin, lmin, 'non', 'euc', 'sil');
         tRQA_ = tRQA_ + toc;
         RQA_(j,:) = Q([1 2 3 5 6 7]);
-        
-        disp(sprintf('  %i', j))
     end
     tspanRP(i) = tRP_ / K; % average calculation time
     tspanRQA(i) = tRQA_ / K; % average calculation time
