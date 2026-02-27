@@ -26,8 +26,8 @@ args = parser.parse_args()
 compFlag = args.compFlag
 
 # results files
-timeResultsfile = f'../Results/time_python_accrqa_{compFlag}.csv'
-rqaResultsfile = f'../Results/rqa_python_accrqa_{compFlag}.csv'
+timeResultsfile = f'../Results/time_python_accrqa_{compFlag}_.csv'
+rqaResultsfile = f'../Results/rqa_python_accrqa_{compFlag}_.csv'
 
 # data file
 datafile = '../Libs/roessler.csv'

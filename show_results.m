@@ -8,14 +8,20 @@ for i = 1:length(files)
    txt{i} = strrep(strrep(files(i).name,'.csv',''),'time_','');
 end
 
+files = dir('Results/rqa_*.csv');
+clear y
+for i = 1:length(files)
+   y{i} = load(['Results/',files(i).name]);
+end
+
 % remove some results
 idx = []
 for i = 1:length(files)
-   if strcmpi(txt{i}, 'RQA_xxxxssHPC') || strcmpi(txt{i}, 'RQA_OpenMP_gcc') || strcmpi(txt{i}, 'matlab_crp')
+   if strcmpi(txt{i}, 'RQA_OpenMP_gcc') || strcmpi(txt{i}, 'matlab_crp')
       idx = [idx, i];
    end
 end
-x(idx) = []; txt(idx) = [];
+x(idx) = []; y(idx) = []; txt(idx) = [];
 
 %% set line properties
 c_matlab = [.93 .7 .13];
@@ -61,40 +67,26 @@ for i = 1:length(x)
    h2(i) = loglog(x{i}(:,1), (x{i}(:,3)), props(i));
 end
 
-%% plot total calculation time
-ha3 = nexttile; hold on
-for i = 1:length(x)
-   loglog(x{i}(:,1), x{i}(:,4), props(i));
-%   idx = find(x{i}(:,4)); idx(isnan(x{i}(idx,4))) = []; idx(1:floor(length(idx)/2)) = [];
-%   p_ = polyfit(log10(x{i}(idx,1)), log10(x{i}(idx,4)),1);
-%   p(i) = p_(1);
-end
 
 %% beautify the plots
 xlabel(ha1,'Length'), ylabel(ha1,'Time (sec)')
 xlabel(ha2,'Length'), ylabel(ha2,'Time (sec)')
-xlabel(ha3,'Length'), ylabel(ha3,'Time (sec)')
-ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log'; ha3.YAxis.Scale='log';
-ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log'; ha3.XAxis.Scale='log';
-ha1.XLim = [100 1000000]; ha2.XLim = [100 1000000]; ha3.XLim = [100 1000000];
-ha1.YLim = [0.00005 600]; ha2.YLim = [0.00005 600]; ha3.YLim = [0.00005 600];
+ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log';
+ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log';
+ha1.XLim = [100 1000000]; ha2.XLim = [100 1000000];
+ha1.YLim = [0.00005 600]; ha2.YLim = [0.00005 600];
 ha1.XTick = 10.^(2:6);
 ha2.XTick = 10.^(2:6);
-ha3.XTick = 10.^(2:6);
 ha1.XTickLabel = num2str(ha1.XAxis.TickValues(:));
 ha2.XTickLabel = num2str(ha2.XAxis.TickValues(:));
-ha3.XTickLabel = num2str(ha2.XAxis.TickValues(:));
 ha1.YAxis.TickValues = [.0001 .001 .01 .1 1 10 100];
 ha2.YAxis.TickValues = [.0001 .001 .01 .1 1 10 100];
-ha3.YAxis.TickValues = [.0001 .001 .01 .1 1 10 100];
 ha1.YTickLabel = num2str(ha1.YAxis.TickValues(:));
 ha2.YTickLabel = num2str(ha2.YAxis.TickValues(:));
-ha3.YTickLabel = num2str(ha2.YAxis.TickValues(:));
-grid(ha1,'on'), grid(ha2,'on'), grid(ha3,'on') 
-box(ha1,'on'), box(ha2,'on'), box(ha3,'on') 
+grid(ha1,'on'), grid(ha2,'on')
+box(ha1,'on'), box(ha2,'on') 
 title(ha1, 'Calculation time RP')
 title(ha2, 'Calculation time RQA')
-title(ha3, 'Calculation time total')
 
 ha4 = nexttile; axis off
 h = legend(ha2,strrep(txt,'_','\_'), 'location', 'layout');
@@ -107,3 +99,14 @@ h.Position = [0.7329 0.1532 0.1415 0.7535];
 
 %% export figure as SVG
 print(gcf,'rp_rqa_speed-test.svg', '-dsvg')
+
+
+
+
+%% plot calculation time for calculation of RP
+clf
+ha1 = nexttile; hold on
+for i = 1:length(y)
+   h1(i) = plot(y{i}(:,1), (y{i}(:,5)), props(i));
+end
+
