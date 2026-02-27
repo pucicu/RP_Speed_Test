@@ -53,7 +53,7 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
                ent = R.diag_entropy(l_min=lmin)
                lam = R.laminarity(v_min=lmin)
                tt = R.trapping_time(v_min=lmin)
-               tRQA_ += (time.time() - start_time) + tRP_ # RQA requires RP
+               tRQA_ += (time.time() - start_time)
                RQA_[j,:] = [rr, det, l, ent, lam, tt]
            except:
                tP_ = np.nan
@@ -70,7 +70,7 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
 
        # save results
-       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRQA[i]}\n")
+       f_time.write(f"{N[i]}, {tspanRP[i]}, {tspanRP[i]+tspanRQA[i]}\n") # RQA needs precalculated RP
        f_time.flush()
        f_rqa.write(f"{N[i]}, {', '.join(str(v) for v in mRQA[i,:])}, {', '.join(str(v) for v in vRQA[i,:])}\n")
        f_rqa.flush()
