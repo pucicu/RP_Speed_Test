@@ -17,8 +17,9 @@ if (( SUBMIT_HPC == 1 )); then
    sbatch software_speed_pyunicorn.slurm
    sbatch software_speed_R.slurm
    sbatch software_speed_RQA_OpenMP.slurm
-   sbatch software_speed_RQA_HPC.slurm
+   #sbatch software_speed_RQA_HPC.slurm
    sbatch software_speed_matlab.slurm 
+   sbatch software_speed_CRPtool.slurm 
 
 else
    # run on login node (or any other local compute node)
@@ -43,5 +44,6 @@ else
    julia --threads 32../Scripts/ software_speed_DynSyst.jl --parallel true
    Rscript ../Scripts/software_speed.R
    matlab -nodesktop < ../Scripts/software_speed.m
+   matlab -nodesktop < ../Scripts/software_speed_CRP.m
 
 fi
