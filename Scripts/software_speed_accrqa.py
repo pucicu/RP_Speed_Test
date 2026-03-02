@@ -36,7 +36,7 @@ datafile = '../Libs/roessler.csv'
 x = np.loadtxt(datafile)
 
 # length of time series for RQA calculation test
-N = np.round(10**np.arange(np.log10(200.),np.log10(1000000.),.075)). astype(int)
+N = np.round(10**np.arange(np.log10(200.),np.log10(2000000.),.075)). astype(int)
 
 # calculate RP and RQA for different length
 tspanRP = np.zeros(len(N));     # result vector computation time
