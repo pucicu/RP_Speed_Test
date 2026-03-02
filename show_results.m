@@ -24,30 +24,30 @@ end
 x(idx) = []; y(idx) = []; txt(idx) = [];
 
 %% set line properties
-c_matlab = [.93 .7 .13];
+c_matlab = [.2 .9 .0];
 c_R = [0 0 0];
 c_C = [.4 .6 .1];
 c_C2 = [.2 .9 .0];
-c_julia = [.13 .7 .93];
-c_julia2 = [.75 .45 .74];
+c_julia2 = [.13 .7 .93];
+c_julia = [.75 .45 .74];
 c_python = [.95 .6 .0];
 c_python2 = [.75 .33 .1];
-c_misc =[.93 .7 .13]; % [.7 .0 .0] [.3 .3 .8] [.6 .3 .1] [0 .1 .8]
+c_misc =[.63 .7 .13]; % [.7 .0 .0] [.3 .3 .8] [.6 .3 .1] [0 .1 .8]
 props(1).Color = c_R; props(1).LineWidth = 3; props(1).LineStyle = ':';
 props(2).Color = c_C; props(2).LineWidth = 2; props(2).LineStyle = '--';
-props(3).Color = c_C2; props(3).LineWidth = 2; props(3).LineStyle = '--';
-props(4).Color = c_julia2; props(4).LineWidth = 2; props(4).LineStyle = ':';
+props(3).Color = c_julia; props(3).LineWidth = 2; props(3).LineStyle = '--';
+props(4).Color = c_julia; props(4).LineWidth = 2; props(4).LineStyle = ':';
 props(5).Color = c_julia2; props(5).LineWidth = 1; props(5).LineStyle = '-.';
-props(6).Color = c_julia; props(6).LineWidth = 3; props(6).LineStyle = ':';
-props(7).Color = c_julia; props(7).LineWidth = 2; props(7).LineStyle = '--';
-props(8).Color = c_julia; props(8).LineWidth = 1; props(8).LineStyle = '-';
+props(6).Color = c_julia2; props(6).LineWidth = 3; props(6).LineStyle = ':';
+props(7).Color = c_matlab; props(7).LineWidth = 2; props(7).LineStyle = '--';
+props(8).Color = c_matlab; props(8).LineWidth = 1; props(8).LineStyle = '-';
 props(9).Color = c_python2; props(9).LineWidth = 2; props(9).LineStyle = '--';
 props(10).Color = c_python2; props(10).LineWidth = 2; props(10).LineStyle = '-.';
 props(11).Color = c_python; props(11).LineWidth = 2; props(11).LineStyle = '-.';
 props(12).Color = c_python; props(12).LineWidth = 2; props(12).LineStyle = ':';
 props(13).Color = c_python; props(13).LineWidth = 1; props(13).LineStyle = '-';
-props(13).Color = c_misc; props(13).LineWidth = 2; props(13).LineStyle = '-.';
 props(14).Color = c_misc; props(14).LineWidth = 2; props(14).LineStyle = ':';
+props(15).Color = c_python; props(15).LineWidth = 1; props(15).LineStyle = '-';
 
 
 %% create figure
@@ -73,7 +73,7 @@ xlabel(ha1,'Length'), ylabel(ha1,'Time (sec)')
 xlabel(ha2,'Length'), ylabel(ha2,'Time (sec)')
 ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log';
 ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log';
-ha1.XLim = [100 1000000]; ha2.XLim = [100 1000000];
+ha1.XLim = [100 200000]; ha2.XLim = [100 200000];
 ha1.YLim = [0.00005 600]; ha2.YLim = [0.00005 600];
 ha1.XTick = 10.^(2:6);
 ha2.XTick = 10.^(2:6);
