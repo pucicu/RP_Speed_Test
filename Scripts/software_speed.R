@@ -34,7 +34,8 @@ lmin = 2;                   # minimal line length
 f_time = file(timeResultsfile, open="w")
 f_rqa = file(rqaResultsfile, open="w")
 for (i in 1:length(N)) {
-   t_ = 0
+   tRP_ = 0
+   tRQA_ = 0
    RQA_ = matrix(0, nrow = K, ncol = 6)
 
    for (j in 1:K) {
@@ -55,7 +56,7 @@ for (i in 1:length(N)) {
         if (inherits(R, "try-error")) {
 
           cat("Error in crqa at i =", i, "j =", j, "- skip calculation\n")
-          t_ = NaN
+          tRP_ = NaN
 
         } else {
 
@@ -64,7 +65,7 @@ for (i in 1:length(N)) {
           end_time = proc.time()[3]
           duration = end_time - start_time
 
-          tRP_ = t_ + duration
+          tRP_ = tRP_ + duration
         }
  
         start_time = proc.time()[3]
@@ -82,7 +83,7 @@ for (i in 1:length(N)) {
         if (inherits(R, "try-error")) {
 
           cat("Error in crqa at i =", i, "j =", j, "- skip calculation\n")
-          t_ = NaN
+          tRQA_ = NaN
 
         } else {
 
@@ -96,7 +97,7 @@ for (i in 1:length(N)) {
           end_time = proc.time()[3]
           duration = end_time - start_time
 
-          tRQA_ = t_ + duration
+          tRQA_ = tRQA_ + duration
           RQA_[j, ] = c(rr, det, l, ent, lam, tt)
         }
 

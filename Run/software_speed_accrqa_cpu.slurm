@@ -4,9 +4,10 @@
 #SBATCH --job-name=accrqa_cpu_speedtest
 #SBATCH --output=../Logs/%x-%j.out
 #SBATCH --error=../Logs/%x-%j.err
-#SBATCH --time=01:00:00
+#SBATCH --time=06:00:00
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=128
+#SBATCH --mem=620G
 
 echo "------------------------------------------------------------"
 echo "SLURM JOB ID: $SLURM_JOBID"
