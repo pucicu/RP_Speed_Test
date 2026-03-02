@@ -26,6 +26,8 @@ tau = 6;                        % embedding delay
 e = 1.2;                        % recurrence threshold
 lmin = 2;                       % minimal line length
 
+R = crp(x(1:1+N(10)-1,1), m, tau, e, 'non', 'euc', 'sil');
+Q = crqa(x(1:1+N(10)-1,1), m, tau, e, [], [], lmin, lmin, 'non', 'euc', 'sil');
 
 % using CRP toolbox (slow because of GUI framework)
 for i = 1:length(N)
