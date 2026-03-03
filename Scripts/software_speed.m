@@ -30,6 +30,10 @@ tau = 6;                        % embedding delay
 e = 1.2;                        % recurrence threshold
 lmin = 2;                       % minimal line length
 
+xe = embed(x(1:1+N(10)-1,1), m, tau);
+R = rp(xe, e, 'fix', 'euc', 'matlabvector'); 
+Q = rqa(R, lmin, 1, 'non');
+
 for i = 1:length(N)
     tRP_ = 0;
     tRQA_ = 0;
