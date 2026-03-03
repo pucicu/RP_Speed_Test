@@ -33,6 +33,19 @@ lmin = 2;                   # minimal line length
 
 f_time = file(timeResultsfile, open="w")
 f_rqa = file(rqaResultsfile, open="w")
+
+# dry run
+R = try(
+  crqa(
+    x[1:N[i]],
+    x[1:N[i]],
+    tau, m, 0, e, 0, lmin, lmin, 1,
+    FALSE, FALSE, "both", "rqa", "euclidean", "continuous"
+  ),
+  silent = TRUE
+)
+
+
 for (i in 1:length(N)) {
    tRP_ = 0
    tRQA_ = 0
@@ -105,8 +118,8 @@ for (i in 1:length(N)) {
     }
     tspanRP[i] = tRP_ / K # average calculation time
     tspanRQA[i] = tRQA_ / K # average calculation time
-    mRQA[i, ] = colMeans(RQA_)
-    vRQA[i, ] = apply(RQA_, 2, var)
+    mRQA[i, ] = colMeans(RQA_/100) # RQA values are given in %
+    vRQA[i, ] = apply(RQA_/100, 2, var)
     cat(N[i], ": ", tspanRQA[i], "\n")
         
     # save results
