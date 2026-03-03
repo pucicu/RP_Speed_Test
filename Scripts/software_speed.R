@@ -37,8 +37,8 @@ f_rqa = file(rqaResultsfile, open="w")
 # dry run
 R = try(
   crqa(
-    x[1:N[i]],
-    x[1:N[i]],
+    x[1:N[10]],
+    x[1:N[10]],
     tau, m, 0, e, 0, lmin, lmin, 1,
     FALSE, FALSE, "both", "rqa", "euclidean", "continuous"
   ),
