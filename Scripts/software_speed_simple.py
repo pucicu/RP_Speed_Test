@@ -22,6 +22,8 @@ N = np.round(10**np.arange(np.log10(200.),np.log10(100000.),.075)). astype(int)
 
 
 # calculate RP and RQA for different length
+tspanRPlast = 0;                # current calculation time (used for skipping calculation)
+tspanRQAlast = 0;               # current calculation time (used for skipping calculation)
 tspanRP = np.zeros(len(N));     # result vector computation time
 tspanRQA = np.zeros(len(N));    # result vector computation time
 mRQA = np.zeros((len(N), 6));   # result vector RQA average
@@ -43,23 +45,31 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
            xe = embed(x[0:N[i]], m, tau)
 
            try:
-               start_time = time.time()
-               R = rp(xe, e)
-               tRP_ += (time.time() - start_time)
-               start_time = time.time()
-               Q1 = np.mean(R)
-               Q2 = det(R, lmin=lmin, hist=None, verb=False)
-               Q3 = entr(R, lmin=lmin, hist=None, verb=False)
-               tRQA_ += (time.time() - start_time)
-               RQA_[j,:] = [Q1, Q2, np.nan, Q3, np.nan, np.nan]
+               if tspanRPlast <= maxT:
+                   start_time = time.time()
+                   R = rp(xe, e)
+                   tRP_ += (time.time() - start_time)
+               else:
+                   tRP_ = NaN;
+               if tspanRQAlast <= maxT:
+                   start_time = time.time()
+                   Q1 = np.mean(R)
+                   Q2 = det(R, lmin=lmin, hist=None, verb=False)
+                   Q3 = entr(R, lmin=lmin, hist=None, verb=False)
+                   tRQA_ += (time.time() - start_time)
+                   RQA_[j,:] = [Q1, Q2, np.nan, Q3, np.nan, np.nan]
+               else
+                   RQA_[j,:] = np.nan
            except:
                tRP_ = np.nan
                tRQA_ = np.nan
-               RQA_[j,:] = [np.nan,np.nan,np.nan,np.nan,np.nan,np.nan]
+               RQA_[j,:] = np.nan
                break
 
        tspanRP[i] = tRP_ / K             # average calculation time
        tspanRQA[i] = tRQA_ / K           # average calculation time
+       tspanRPlast = tspanRP[i];
+       tspanRQAlast = tspanRQA[i)];
        mRQA[i,:] = np.mean(RQA_, axis=0) # average RQA
        vRQA[i,:] = np.var(RQA_, axis=0)  # variance RQA
        print(N[i], ": ", tspanRP[i], " ", tspanRQA[i])
@@ -70,6 +80,6 @@ with open(timeResultsfile, "w") as f_time, open(rqaResultsfile, "w") as f_rqa:
        f_rqa.write(f"{N[i]}, {', '.join(str(v) for v in mRQA[i,:])}, {', '.join(str(v) for v in vRQA[i,:])}\n")
        f_rqa.flush()
 
-       if tspanRP[i] + tspanRQA[i] >= maxT:
+       if tspanRPlast >= maxT and tspanRQAlast >= maxT:
           break
 

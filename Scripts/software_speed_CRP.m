@@ -15,6 +15,8 @@ N = round(10.^(log10(200):.075:log10(200000)));
 
 
 %% calculate RP and RQA for different length
+tspanRPlast = 0;                % current calculation time (used for skipping calculation)
+tspanRQAlast = 0;               % current calculation time (used for skipping calculation)
 tspanRP = zeros(length(N), 1);  % result vector computation time
 tspanRQA = zeros(length(N), 1); % result vector computation time
 mRQA = NaN * ones(length(N), 6);     % result vector RQA average
@@ -35,16 +37,26 @@ for i = 1:length(N)
     tRQA_ = 0;
     RQA_ = zeros(K, 6);
     for j = 1:K
-        tic
-        R = crp(x(1:1+N(i)-1,1), m, tau, e, 'non', 'euc', 'sil');
-        tRP_ = tRP_ + toc;
-        tic
-        Q = crqa(x(1:1+N(i)-1,1), m, tau, e, [], [], lmin, lmin, 'non', 'euc', 'sil');
-        tRQA_ = tRQA_ + toc;
-        RQA_(j,:) = Q([1 2 3 5 6 7]);
+        if tspanRPlast <= maxT
+            tic
+            R = crp(x(1:1+N(i)-1,1), m, tau, e, 'non', 'euc', 'sil');
+            tRP_ = tRP_ + toc;
+            tic
+        else
+            tRP_ = NaN;
+        end
+        if tspanRQAlast <= maxT
+            Q = crqa(x(1:1+N(i)-1,1), m, tau, e, [], [], lmin, lmin, 'non', 'euc', 'sil');
+            tRQA_ = tRQA_ + toc;
+            RQA_(j,:) = Q([1 2 3 5 6 7]);
+        else
+            RQA_(j,:) = NaN * ones(1,6);
+        end
     end
     tspanRP(i) = tRP_ / K; % average calculation time
     tspanRQA(i) = tRQA_ / K; % average calculation time
+    tspanRPlast = tspanRP(i);
+    tspanRQAlast = tspanRQA(i);
     mRQA(i,:) = mean(RQA_);  % average RQA
     vRQA(i,:) = var(RQA_);   % variance RQA
     disp(sprintf('%i: %f %f', N(i), tspanRP(i), tspanRQA(i)))
@@ -55,7 +67,7 @@ for i = 1:length(N)
     ex = [N(:) mRQA vRQA];
     save(rqaResultsfile,'ex','-ascii','-tabs')
 
-    if tspanRP(i) >= maxT & tspanRQA(i) >= maxT, break, end
+    if tspanRPlast >= maxT & tspanRQAlast >= maxT, break, end
     
 end
 
