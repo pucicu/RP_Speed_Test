@@ -68,7 +68,7 @@ for (i in 1:length(N)) {
 
         if (inherits(R, "try-error")) {
 
-          cat("Error in crqa(RP) at i =", i, "j =", j, "- skip calculation\n")
+          cat("Error in crqa(RQRPA) at i =", i, "j =", j, "-", conditionMessage(attr(R, "condition")), "\n")
           tRP_ = NaN
 
         } else {
@@ -95,7 +95,7 @@ for (i in 1:length(N)) {
 
         if (inherits(R, "try-error")) {
 
-          cat("Error in crqa(RQA) at i =", i, "j =", j, "- skip calculation\n")
+          cat("Error in crqa(RQA) at i =", i, "j =", j, "-", conditionMessage(attr(R, "condition")), "\n")
           tRQA_ = NaN
 
         } else {
