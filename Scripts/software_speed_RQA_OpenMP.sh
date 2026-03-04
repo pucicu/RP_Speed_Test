@@ -74,6 +74,13 @@ for N in $(generate_N_list); do
 
     # Measure runtime (10x)
     sum=0
+    
+    RR=()
+    DET=()
+    L=()
+    DE=()
+    LAM=()
+    TT=()
 
     for ((i=1; i<=REPEATS; i++)); do
 

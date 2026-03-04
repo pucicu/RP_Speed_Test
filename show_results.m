@@ -73,7 +73,7 @@ xlabel(ha1,'Length'), ylabel(ha1,'Time (sec)')
 xlabel(ha2,'Length'), ylabel(ha2,'Time (sec)')
 ha1.YAxis.Scale='log'; ha2.YAxis.Scale='log';
 ha1.XAxis.Scale='log'; ha2.XAxis.Scale='log';
-ha1.XLim = [100 200000]; ha2.XLim = [100 200000];
+ha1.XLim = [100 500000]; ha2.XLim = [100 500000];
 ha1.YLim = [0.00005 600]; ha2.YLim = [0.00005 600];
 ha1.XTick = 10.^(2:6);
 ha2.XTick = 10.^(2:6);
@@ -103,10 +103,15 @@ print(gcf,'rp_rqa_speed-test.svg', '-dsvg')
 
 
 
-%% plot calculation time for calculation of RP
-clf
-ha1 = nexttile; hold on
-for i = 1:length(y)
-   h1(i) = plot(y{i}(:,1), (y{i}(:,5)), props(i));
-end
+% %% plot RQA results for comparison
+% clf
+% ha1 = nexttile; hold on
+% 
+% i_meas = 2;
+% for i = 1:length(y)
+%    h1(i) = plot(y{i}(:,1), (y{i}(:,i_meas)), props(i));
+% end
+% 
+% h = legend(ha1,strrep(txt,'_','\_'));
+
 
