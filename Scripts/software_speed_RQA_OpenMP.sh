@@ -96,10 +96,10 @@ for N in $(generate_N_list); do
 
         RR+=("${vals[0]}")
         DET+=("${vals[1]}")
-        L+=("${vals[3]}")
-        DE+=("${vals[4]}")
-        LAM+=("${vals[5]}")
-        TT+=("${vals[6]}")        
+        L+=("${vals[2]}")
+        DE+=("${vals[3]}")
+        LAM+=("${vals[4]}")
+        TT+=("${vals[5]}")        
     done
 
     # Compute mean
