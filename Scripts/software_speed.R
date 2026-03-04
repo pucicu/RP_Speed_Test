@@ -22,8 +22,8 @@ N = round(10.^seq(log10(200),log10(100000), 0.075))
 # calculate RP and RQA for different length
 tspanRQA = numeric(length(N))  # result vector computation time
 tspanRP = numeric(length(N))  # result vector computation time
-mRQA = matrix(0, nrow = length(N), ncol = 6) # result vector RQA average
-vRQA = matrix(0, nrow = length(N), ncol = 6) # result vector RQA variance
+mRQA = matrix(NaN, nrow = length(N), ncol = 6) # result vector RQA average
+vRQA = matrix(NaN, nrow = length(N), ncol = 6) # result vector RQA variance
 K = 10                      # number of runs (for averaging time)
 maxT = 600                  # stop calculations if maxT is exceeded
 m = 3;                      # embedding dimension
@@ -100,11 +100,11 @@ for (i in 1:length(N)) {
 
         } else {
 
-          rr  = R[[1]]
-          det = R[[2]]
+          rr  = R[[1]]/100 # RR values are given in %
+          det = R[[2]]/100 # DET values are given in %
           l   = R[[5]]
           ent = R[[6]]
-          lam = R[[8]]
+          lam = R[[8]]/100 # LAM values are given in %
           tt  = R[[9]]
 
           end_time = proc.time()[3]
@@ -118,7 +118,7 @@ for (i in 1:length(N)) {
     }
     tspanRP[i] = tRP_ / K # average calculation time
     tspanRQA[i] = tRQA_ / K # average calculation time
-    mRQA[i, ] = colMeans(RQA_/100) # RQA values are given in %
+    mRQA[i, ] = colMeans(RQA_)
     vRQA[i, ] = apply(RQA_/100, 2, var)
     cat(N[i], ": ", tspanRQA[i], "\n")
         

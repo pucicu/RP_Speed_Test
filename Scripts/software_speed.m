@@ -21,8 +21,8 @@ N = round(10.^(log10(200):.075:log10(200000)));
 %% calculate RP and RQA for different length
 tspanRP = zeros(length(N), 1);  % result vector computation time
 tspanRQA = zeros(length(N), 1); % result vector computation time
-mRQA = zeros(length(N), 6);     % result vector RQA average
-vRQA = zeros(length(N), 6);     % result vector RQA variance
+mRQA = NaN * ones(length(N), 6);     % result vector RQA average
+vRQA = NaN * ones(length(N), 6);     % result vector RQA variance
 K = 10;                         % number of runs (for averaging time)
 maxT = 600;                     % stop calculations if maxT is exceeded
 m = 3;                          % embedding dimension
