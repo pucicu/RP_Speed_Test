@@ -31,8 +31,11 @@ tau = 6;                    # embedding delay
 e = 1.2;                    # recurrence threshold
 lmin = 2;                   # minimal line length
 
+# create files
 f_time = file(timeResultsfile, open="w")
 f_rqa = file(rqaResultsfile, open="w")
+close(f_time)
+close(f_rqa)
 
 # dry run
 R = try(
@@ -123,19 +126,17 @@ for (i in 1:length(N)) {
     cat(N[i], ": ", tspanRQA[i], "\n")
         
     # save results
-    writeLines(sprintf("%d, %f, %f", N[i], tspanRP[i], tspanRQA[i]), f_time)
+    write(sprintf("%d, %f, %f", N[i], tspanRP[i], tspanRQA[i]), file = timeResultsfile, append = TRUE)
+    
     line <- paste(
       N[i],
       paste(mRQA[i, ], collapse = ", "),
       paste(vRQA[i, ], collapse = ", "),
       sep = ", "
     )
-    writeLines(line, f_rqa)
+    write(line, rqaResultsfile, append = TRUE)
 
     if (tspanRQA[i] >= maxT) {
        break
     }
 }    
-
-close(f_time)
-close(f_rqa)

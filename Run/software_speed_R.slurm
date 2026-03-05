@@ -8,7 +8,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=500G
+#SBATCH --mem=640G
 
 echo "------------------------------------------------------------"
 echo "SLURM JOB ID: $SLURM_JOBID"
