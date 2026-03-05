@@ -115,8 +115,12 @@ for N in $(generate_N_list); do
     for arr in RR DET L DE LAM TT; do
         eval "values=(\"\${$arr[@]}\")"
         m=$(mean "${values[@]}")
+        out+=("$m")
+    done
+    for arr in RR DET L DE LAM TT; do
+        eval "values=(\"\${$arr[@]}\")"
         v=$(variance "${values[@]}")
-        out+=("$m,$v")
+        out+=("$v")
     done
 
     # Append to CSV
