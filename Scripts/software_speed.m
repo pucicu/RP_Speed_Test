@@ -34,7 +34,7 @@ lmin = 2;                       % minimal line length
 
 xe = embed(x(1:1+N(10)-1,1), m, tau);
 R = rp(xe, e, 'fix', 'euc', 'matlabvector'); 
-Q = rqa(R, lmin, 1, 'non');
+Q = rqa(R, lmin, 1, 'none', 'nono');
 
 for i = 1:length(N)
     tRP_ = 0;
@@ -52,7 +52,7 @@ for i = 1:length(N)
             tRP_ = NaN;
         end
         if tspanRQAlast <= maxT
-            Q = rqa(R, lmin, 1, 'non');
+            Q = rqa(R, lmin, 1, 'none', 'nono');
             tRQA_ = tRQA_ + toc;
             RQA_(j,:) = Q([1 2 3 5 6 7]);
         else
