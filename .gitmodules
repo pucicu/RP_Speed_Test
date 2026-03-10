@@ -4,3 +4,6 @@
 [submodule "Libs/RQA_HPC"]
 	path = Libs/RQA_HPC
 	url = https://code.it4i.cz/ADAS/RQA_HPC.git
+[submodule "Libs/RQA_Samp"]
+	path = Libs/RQA_Samp
+	url = git@github.com:pucicu/RQA_Samp.git
