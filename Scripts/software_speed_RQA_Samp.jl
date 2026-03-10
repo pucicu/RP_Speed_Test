@@ -4,7 +4,7 @@
 using DelayEmbeddings
 using DelimitedFiles
 using Statistics
-include("../Libs/RPLineLengths.jl")
+include("../Libs/RQA_Samp/RPLineLengths.jl")
 
 # results file
 timeResultsfile = "../Results/time_julia_RQA_Samp.csv"
