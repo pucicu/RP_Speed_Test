@@ -15,13 +15,13 @@ for i = 1:length(files)
 end
 
 % remove some results
-idx = []
-for i = 1:length(files)
-   if strcmpi(txt{i}, 'RQA_OpenMP_gcc') || strcmpi(txt{i}, 'matlab_crp')
-      idx = [idx, i];
-   end
-end
-x(idx) = []; y(idx) = []; txt(idx) = [];
+% idx = []
+% for i = 1:length(files)
+%    if strcmpi(txt{i}, 'RQA_OpenMP_gcc') || strcmpi(txt{i}, 'matlab_crp')
+%       idx = [idx, i];
+%    end
+% end
+% x(idx) = []; y(idx) = []; txt(idx) = [];
 
 %% set line properties
 c_matlab = [.2 .9 .0];
@@ -103,15 +103,35 @@ print(gcf,'rp_rqa_speed-test.svg', '-dsvg')
 
 
 
-% %% plot RQA results for comparison
-% clf
-% ha1 = nexttile; hold on
-% 
-% i_meas = 2;
-% for i = 1:length(y)
-%    h1(i) = plot(y{i}(:,1), (y{i}(:,i_meas)), props(i));
-% end
-% 
-% h = legend(ha1,strrep(txt,'_','\_'));
+%% plot RQA results for comparison
+
+%% select reference values
+rqa_ref = y{6}(end,2:end); % obtained from Julia single
+
+%% RQA names
+rqa_txt = {'RR';'DET';'L\_mean';'ENT';'LAM';'TT'}
+
+clf
+set(gcf, 'pos', [87 537 950 430])
+for i_meas = 2:7;
+    ha1 = nexttile
+    for i = 1:length(y)
+       h1(i) = semilogy(y{i}(2:end,1), 100* (y{i}(2:end,i_meas) - rqa_ref(i_meas-1)) ./ rqa_ref(i_meas-1), props(i));
+       hold on
+    end
+    ylim([.000001 10])
+    xlabel('Length'), ylabel('Relative deviation %')
+    title(rqa_txt{i_meas-1})
+end
+
+ha2 = nexttile;axis off
+h = legend(ha1,strrep(txt,'_','\_'));
+h.Layout.Tile=7;
+h.Box = 'off';
+h.FontSize=11;
+h.Location = 'none';
+
+%% export figure as SVG
+print(gcf,'rp_rqa_value-test.svg', '-dsvg')
 
 
