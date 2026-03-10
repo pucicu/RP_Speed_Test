@@ -80,4 +80,12 @@ Recurrence plots (RPs) cannot be calculated using _RQA_OpenMP_, _RQA_Samp_, and 
 
 ![Computation speed for recurrence plots and recurrence quantification measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/master/rp_rqa_speed-test.svg "Computation speed")
 
-![Relative deviations in selected RQA measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/master/rp_rqa_value-test.svg "RQA relative deviations")
+![Relative deviations in selected RQA measures for the Rössler system.](https://raw.githubusercontent.com/pucicu/RP_Speed_Test/refs/heads/master/rp_rqa_value-test.svg "RQA relative deviations")
+
+## Copyright
+
+Norbert Marwan\
+Potsdam Institute for Climate Impact Research\
+3/2026
+
+License: GPLv3+

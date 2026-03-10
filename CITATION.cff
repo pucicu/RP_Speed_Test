@@ -18,6 +18,11 @@ identifiers:
   - type: url
     value: 'https://github.com/pucicu/RP_Speed_Test'
     description: Github-Page
+  - type: doi
+    value: 10.5281/zenodo.17552873
+    description: Zenodo
+  - type: swh
+    value: 'swh:1:dir:c4b00d7649c48c1e9f3a1074051e2ec99731fc85'
 repository-code: 'https://github.com/pucicu/RP_Speed_Test'
 abstract: >-
   Scripts designed to compare the performance of Julia,
@@ -34,5 +39,7 @@ keywords:
   - R
   - time series analysis
   - nonlinear dynamics
-license: GPL-3.0
-date-released: 2022-04-08
+license: GPL-3.0+
+commit: 3c903f4
+version: '1.414'
+date-released: '2026-03-10'
