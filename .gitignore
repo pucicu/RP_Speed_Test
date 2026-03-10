@@ -12,3 +12,4 @@ Libs/roessler.csv
 Run/tmp_data_hpc.dat
 Run/tmp_data_openmp.dat
 Run/tmp_results_openmp.dat
+run.slurm_obsolete
