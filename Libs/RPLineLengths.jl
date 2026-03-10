@@ -244,6 +244,7 @@ reducing computation cost compared to a full scan.
 
 # Returns
 - `L::Vector{Int}`: Histogram where `L[n]` counts the number of sampled diagonal lines of length `n`.
+- `N::Int`: Total number of searches.
 
 # Description
 This version speeds up diagonal line length computation by:
@@ -260,11 +261,16 @@ function get_hist_diagonal_sampled(x::AbstractMatrix{T}, e::T, M::Int) where {T<
     e2 = e^2                          # Squared threshold (avoids sqrt)
     count = 0                         # Number of valid lines found
     countAll = 0                      # Number of searches
+    total_pairs = N * (N - 1) ÷ 2     # Number of (i,j) paires with i > j (excl. LOI)
 
     while count < M
         countAll += 1                 # Count number of searches
-        i_start = rand(2:N)           # Random starting index for i
-        j_start = rand(1:i_start-1)   # Random starting index for j
+        idx = rand(1:total_pairs)     # Random start pair (i,j) in linear notation
+        i_start = ceil(Int, (1 + sqrt(1 + 8*idx)) / 2)     # Translate linear index to i 
+        j_start = idx - (i_start - 1) * (i_start - 2) ÷ 2  # Translate linear index to j
+
+        #i_start = rand(2:N)           # Random starting index for i
+        #j_start = rand(1:i_start-1)   # Random starting index for j
 
         # Check if R(i_start,j_start) = 1 (start point)
         D2 = zero(T)

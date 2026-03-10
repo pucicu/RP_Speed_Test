@@ -20,7 +20,8 @@ x = readdlm(datafile)
 function rqa(x,e,M)
     P, N = get_hist_diagonal_sampled(x, e, M) # histogram of line lengths
     p = P / sum(P)                         # probability distribution
-    RR = sum((1:length(P)) .* P) / (N + sum((1:length(P)) .* (P .-1)))
+    idx = findall(!iszero, P)
+    RR = sum((1:length(P)) .* P) / (N + sum(idx .* (P[idx] .-1)))
     DET = sum((2:length(p)) .* P[2:end]) / sum((1:length(P)) .* P)
     L = sum((2:length(P)) .* P[2:end]) / sum(P[2:end])
     ENTR = -sum(pi > 0 ? pi * log(pi) : 0 for pi in p)
